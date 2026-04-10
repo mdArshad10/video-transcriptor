@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Plus, Play, Clock, CheckCircle2, Upload, Loader } from 'lucide-react';
 import { VideoFormDialog } from '@/components/VideoFormDialog';
-import { mockCourses, type Video, getProgressForVideo, getCourseProgress, formatDuration } from "@/utils/mock-data";
+import { type Video, getProgressForVideo, formatDuration } from "@/utils/mock-data";
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Progress } from '@workspace/ui/components/progress';
@@ -21,7 +21,7 @@ const CourseDetailPage = () => {
     const navigate = useNavigate();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingVideo, setEditingVideo] = useState<Video | null>(null);
-    const [fileProgress, setFileProgress] = useState<
+    const [_, setFileProgress] = useState<
         Record<string, FileProgress>
     >({});
     const [createVideo] = useCreateVideoMutation();
