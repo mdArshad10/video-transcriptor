@@ -49,6 +49,12 @@ export class LmsCoursesController {
     return this.courseService.getMyCourses(query);
   }
 
+  @Get(":id")
+  getCourseById(@Param("id") id: string) {
+    this.logger.log(`get course ${id}`);
+    return this.courseService.getCourseById(id);
+  }
+
   // ─── Update ────────────────────────────────────────────────────────────────
 
   /** PATCH /courses/:id */

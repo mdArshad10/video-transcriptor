@@ -6,5 +6,6 @@ import axiosBaseQuery from '../axio/axiosBasic'
 export const baseApi = createApi({
     reducerPath: 'baseApi',
     baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:3000/' }),
+    tagTypes: ['Course', 'Video', 'Progress'],
     endpoints: () => ({}),
 })

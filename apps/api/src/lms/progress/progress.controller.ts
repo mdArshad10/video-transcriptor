@@ -5,6 +5,7 @@ import {
   Logger,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ProgressService } from './progress.service';
 import { UpdateProgressDto } from './dto';
@@ -35,11 +36,12 @@ export class ProgressController {
 
   /**
    * GET /progress/my
+   * GET /progress/my?courseId=<id>  — scoped to a single course
    * Returns all video-progress records for the authenticated user.
    */
   @Get('progress/my')
-  findMy() {
-    this.logger.log('findMy progress');
-    return this.progressService.getMyProgress();
+  findMy(@Query('courseId') courseId?: string) {
+    this.logger.log(`findMy progress${courseId ? ` (course ${courseId})` : ''}`);
+    return this.progressService.getMyProgress(courseId);
   }
 }

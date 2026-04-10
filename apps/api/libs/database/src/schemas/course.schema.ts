@@ -32,14 +32,14 @@ export class Course {
   thumbnail_url: string | null;
 
   /** Business owner / organisation that owns the course */
-  @Prop({ type: String, required: true })
-  owner_id: string;
+  @Prop({ type: String })
+  owner_id: string | null;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  created_by: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  created_by: Types.ObjectId | null;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  updated_by: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  updated_by: Types.ObjectId | null;
 
   /** Soft-delete timestamp */
   @Prop({ type: Date, default: null })

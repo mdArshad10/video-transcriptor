@@ -8,6 +8,8 @@ const validationSchema = Yup.object({
     AWS_DEFAULT_REGION: Yup.string().required(),
     AWS_ACCESS_KEY_ID: Yup.string().required(),
     AWS_SECRET_ACCESS_KEY: Yup.string().required(),
+    AWS_S3_REGION: Yup.string().required(),
+    AWS_S3_BUCKET_NAME: Yup.string().required(),
 })
 
 export default validationSchema;

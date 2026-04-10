@@ -6,12 +6,15 @@ import { App } from "./App.tsx"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
 import { Provider } from 'react-redux'
 import { store } from './store/store'
+import { ErrorBoundary } from "react-error-boundary"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
       <Provider store={store}>
-        <App />
+        <ErrorBoundary fallbackRender={() => <div>Something went wrong</div>}>
+          <App />
+        </ErrorBoundary>
       </Provider>
     </ThemeProvider>
   </StrictMode>

@@ -19,9 +19,6 @@ export class CreateVideoDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  storageKey: string;
 
   @IsInt()
   @Min(0)
