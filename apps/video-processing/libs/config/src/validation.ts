@@ -8,6 +8,7 @@ const validationSchema = Yup.object({
     AWS_ACCESS_KEY_ID: Yup.string().required(),
     AWS_SECRET_ACCESS_KEY: Yup.string().required(),
     AWS_SQS_QUEUE_URL: Yup.string().required(),
+    PROCESSING_DIR: Yup.string().optional(),
 })
 
 export default validationSchema;

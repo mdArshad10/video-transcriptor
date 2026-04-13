@@ -12,12 +12,9 @@ import {
 
 import { ConfigService } from '@nestjs/config';
 import { createWriteStream, readdirSync, readFileSync } from "fs";
-import { exec } from "child_process";
-import { promisify } from "util";
 import * as path from "path";
 import * as fs from "fs";
-
-const execAsync = promisify(exec);
+import { spawn } from "child_process";
 
 
 
@@ -26,6 +23,7 @@ export class AppService implements OnModuleInit {
   private readonly sqsClient: SQSClient;
   private readonly s3Client: S3Client;
   private readonly queueUrl: string;
+  private readonly processingDir: string;
 
   constructor(
     private readonly configService: ConfigService,
@@ -48,6 +46,7 @@ export class AppService implements OnModuleInit {
     });
 
     this.queueUrl = this.configService.getOrThrow<string>('AWS_SQS_QUEUE_URL');
+    this.processingDir = this.resolveProcessingDir();
   }
 
   async onModuleInit() {
@@ -111,17 +110,27 @@ export class AppService implements OnModuleInit {
     fs.writeFileSync(`${outputDir}/master.m3u8`, master);
   }
 
+  private resolveProcessingDir() {
+    const configuredDir = this.configService.get<string>('PROCESSING_DIR');
+
+    if (configuredDir) {
+      return configuredDir;
+    }
+
+    if (fs.existsSync('/data')) {
+      return '/data';
+    }
+
+    return path.resolve(process.cwd(), 'worker-data');
+  }
+
   private async processVideo(bucket: string, key: string) {
+    const videoId = key.split("/")[1]; // adjust if needed
+    const inputPath = path.join(this.processingDir, `${videoId}-input.mp4`);
+    const outputDir = path.join(this.processingDir, `${videoId}-hls`);
+
     try {
-
-      // 4. Upload processed files
-
-      const videoId = key.split("/")[1]; // adjust if needed
-
-      const inputPath = `/tmp/${videoId}-input.mp4`;
-      const outputDir = `/tmp/${videoId}-hls`;
-
-      // 1. Download file from S3 and save locally (/tmp/input.mp4)
+      // 1. Download file from S3 and save locally
       console.log("Step 1: Downloading from S3...");
       await this.downloadFromS3(bucket, key, inputPath);
 
@@ -138,9 +147,20 @@ export class AppService implements OnModuleInit {
       await this.uploadFolderToS3(bucket, outputDir, `videos/${videoId}/hls`);
 
       console.log("Step 5: Cleanup");
-
     } catch (error) {
       console.error('Error processing message:', error);
+    } finally {
+      this.cleanupFiles(inputPath, outputDir);
+    }
+  }
+
+  private cleanupFiles(inputPath: string, outputDir: string) {
+    if (fs.existsSync(inputPath)) {
+      fs.rmSync(inputPath, { force: true });
+    }
+
+    if (fs.existsSync(outputDir)) {
+      fs.rmSync(outputDir, { recursive: true, force: true });
     }
   }
 
@@ -156,6 +176,7 @@ export class AppService implements OnModuleInit {
     );
 
     return new Promise<void>((resolve, reject) => {
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       const writeStream = createWriteStream(outputPath);
       const body = res.Body as any;
       body.pipe(writeStream);
@@ -168,21 +189,55 @@ export class AppService implements OnModuleInit {
   // FFmpeg Processing
   // ------------------------
   async runFFmpeg(input: string, outputDir: string) {
-    const cmd = `
-      mkdir -p ${outputDir} &&
-      ffmpeg -i ${input} \
-      -filter_complex "[0:v]split=2[v1][v2];[v1]scale=1280:720[v1out];[v2]scale=854:480[v2out]" \
-      -map "[v1out]" -map 0:a \
-      -c:v:0 libx264 -b:v:0 3000k \
-      -hls_time 6 -hls_playlist_type vod \
-      -hls_segment_filename "${outputDir}/720p_%03d.ts" ${outputDir}/720p.m3u8 \
-      -map "[v2out]" -map 0:a \
-      -c:v:1 libx264 -b:v:1 1500k \
-      -hls_time 6 -hls_playlist_type vod \
-      -hls_segment_filename "${outputDir}/480p_%03d.ts" ${outputDir}/480p.m3u8
-    `;
+    return new Promise<void>((resolve, reject) => {
+      // ensure folder exists
+      fs.mkdirSync(outputDir, { recursive: true });
 
-    await execAsync(cmd);
+      const args = [
+        "-i", input,
+        "-filter_complex",
+        "[0:v]split=2[v1][v2];[v1]scale=1280:720[v1out];[v2]scale=854:480[v2out]",
+
+        // 720p
+        "-map", "[v1out]",
+        "-map", "0:a?",
+        "-c:v:0", "libx264",
+        "-b:v:0", "3000k",
+        "-hls_time", "6",
+        "-hls_playlist_type", "vod",
+        "-hls_segment_filename", `${outputDir}/720p_%03d.ts`,
+        `${outputDir}/720p.m3u8`,
+
+        // 480p
+        "-map", "[v2out]",
+        "-map", "0:a?",
+        "-c:v:1", "libx264",
+        "-b:v:1", "1500k",
+        "-hls_time", "6",
+        "-hls_playlist_type", "vod",
+        "-hls_segment_filename", `${outputDir}/480p_%03d.ts`,
+        `${outputDir}/480p.m3u8`,
+      ];
+
+      const ffmpeg = spawn("ffmpeg", args);
+
+      ffmpeg.stderr.on("data", (data) => {
+        console.log("FFmpeg:", data.toString());
+      });
+
+      ffmpeg.on("close", (code) => {
+        if (code === 0) {
+          console.log("✅ FFmpeg finished");
+          resolve();
+        } else {
+          reject(new Error(`FFmpeg exited with code ${code}`));
+        }
+      });
+
+      ffmpeg.on("error", (err) => {
+        reject(err);
+      });
+    });
   }
 
   // ------------------------
