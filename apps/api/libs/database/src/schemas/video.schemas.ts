@@ -17,12 +17,19 @@ export class Video {
   @Prop({ type: String, default: null })
   description: string | null;
 
-  @Prop({ type: String, enum: ["UPLOADING", "UPLOADED", "FAILED"], default: "UPLOADING" })
-  status: "UPLOADING" | "UPLOADED" | "FAILED";
+  @Prop({
+    type: String,
+    enum: ['UPLOADING', 'READY', 'UPLOADED', 'FAILED'],
+    default: 'UPLOADING',
+  })
+  status: 'UPLOADING' | 'UPLOADED' | 'READY' | 'FAILED';
 
   /** S3 / GCS / R2 object key */
   @Prop({ type: String, required: true })
-  storage_key: string;
+  raw_storage_key: string;
+
+  @Prop({ type: String, default:null })
+  hls_Master_Url:string
 
   @Prop({ type: Number, default: null })
   duration_seconds: number | null;

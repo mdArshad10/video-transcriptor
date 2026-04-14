@@ -6,7 +6,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Label } from '@workspace/ui/components/label';
 import { Switch } from '@workspace/ui/components/switch';
 import { Upload, File } from 'lucide-react';
-import { type Video } from '@/utils/mock-data';
+import { type Video } from '@/store/api/videoApi';
 
 interface VideoFormDialogProps {
   open: boolean;
@@ -28,7 +28,7 @@ export const VideoFormDialog = ({ open, onOpenChange, video, onSave }: VideoForm
       setTitle(video.title);
       setDescription(video.description || '');
       setIsPublished(video.is_published);
-      setFileName(video.storage_key.split('/').pop() || '');
+      setFileName(video.raw_storage_key.split('/').pop() || '');
     } else {
       setTitle('');
       setDescription('');
@@ -52,7 +52,7 @@ export const VideoFormDialog = ({ open, onOpenChange, video, onSave }: VideoForm
       title,
       description: description || null,
       is_published: isPublished,
-      storage_key: `courses/uploads/${fileName || 'video.mp4'}`,
+      raw_storage_key: `courses/uploads/${fileName || 'video.mp4'}`,
     }, file);
   };
 

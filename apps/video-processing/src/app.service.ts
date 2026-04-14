@@ -125,9 +125,14 @@ export class AppService implements OnModuleInit {
   }
 
   private async processVideo(bucket: string, key: string) {
-    const videoId = key.split("/")[1]; // adjust if needed
+    const parts = key.split('/')
+    const videoId = parts[4]; // adjust if needed
+    const courseId = parts[2];
     const inputPath = path.join(this.processingDir, `${videoId}-input.mp4`);
     const outputDir = path.join(this.processingDir, `${videoId}-hls`);
+    // const processed_video_s3_bucket = this.configService.getOrThrow<string>(
+    //   'AWS_S3_PROCESSED_VIDEO_BUCKET_NAME',
+    // );
 
     try {
       // 1. Download file from S3 and save locally
@@ -142,9 +147,16 @@ export class AppService implements OnModuleInit {
       console.log("Step 3: Creating master playlist...");
       this.createMasterPlaylist(outputDir);
 
+
+      const s3Prefix = `processed/courses/${courseId}/videos/${videoId}`;
+
       // 3. Upload HLS to S3
       console.log("Step 4: Uploading HLS to S3...");
-      await this.uploadFolderToS3(bucket, outputDir, `videos/${videoId}/hls`);
+      await this.uploadFolderToS3(
+        bucket,
+        outputDir,
+        s3Prefix,
+      );
 
       console.log("Step 5: Cleanup");
     } catch (error) {
@@ -248,9 +260,25 @@ export class AppService implements OnModuleInit {
     folderPath: string,
     s3Prefix: string
   ) {
-    const files = readdirSync(folderPath);
+    const files = readdirSync(folderPath).filter((file) =>
+      fs.statSync(path.join(folderPath, file)).isFile(),
+    );
 
-    for (const file of files) {
+    // make the upload the in order
+    const segmentFiles = files
+      .filter((file) => file.endsWith(".ts"))
+      .sort();
+    const variantPlaylists = files
+      .filter((file) => file.endsWith(".m3u8") && file !== "master.m3u8")
+      .sort();
+    const masterPlaylist = files.filter((file) => file === "master.m3u8");
+    const uploadOrder = [
+      ...segmentFiles,
+      ...variantPlaylists,
+      ...masterPlaylist,
+    ];
+
+    for (const file of uploadOrder) {
       const filePath = path.join(folderPath, file);
       const fileContent = readFileSync(filePath);
 

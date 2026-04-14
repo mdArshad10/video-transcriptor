@@ -5,6 +5,6 @@ import { IsString, IsOptional, IsIn } from 'class-validator';
 export class UpdateVideoDto extends PartialType(CreateVideoDto) {
   @IsOptional()
   @IsString()
-  @IsIn(['UPLOADING', 'UPLOADED', 'FAILED'])
-  status?: 'UPLOADING' | 'UPLOADED' | 'FAILED';
+  @IsIn(['UPLOADING', 'UPLOADED', 'READY', 'FAILED'])
+  status?: 'UPLOADING' | 'UPLOADED' | 'READY' | 'FAILED';
 }

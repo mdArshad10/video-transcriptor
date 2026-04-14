@@ -33,14 +33,14 @@ export class VideosService {
 
     const videoId = randomUUID();
 
-    const storage_key = `courses/${courseId}/videos/${videoId}/${dto.title.replace(/\s/g, '_')}.mp4`;
+    const rawStorageKey = `raw/courses/${courseId}/videos/${videoId}/${dto.title.replace(/\s/g, '_')}.mp4`;
 
     try {
       const video = await this.videoModel.create({
         course_id: new Types.ObjectId(courseId),
         title: dto.title,
         description: dto.description ?? null,
-        storage_key,
+        raw_storage_key: rawStorageKey,
         duration_seconds: dto.durationSeconds ?? null,
         thumbnail_url: dto.thumbnailUrl ?? null,
         video_order: dto.videoOrder,
@@ -50,7 +50,7 @@ export class VideosService {
         updated_by: null,
       });
 
-      const url = await this.storageService.createPreSignedUrl(storage_key);
+      const url = await this.storageService.createPreSignedUrl(rawStorageKey);
 
       return { message: 'video created', data: video, url };
     } catch (err: any) {
@@ -79,6 +79,25 @@ export class VideosService {
       .lean();
 
     return { data, total: data.length };
+  }
+
+  async getCourseVideoById(courseId: string, videoId: string) {
+    this.logger.log(`Fetching video ${videoId} for course ${courseId}`);
+
+    const data = await this.videoModel
+      .findOne({
+        _id: new Types.ObjectId(videoId),
+        course_id: new Types.ObjectId(courseId),
+      })
+      .lean();
+
+    if (!data) {
+      throw new NotFoundException(
+        `Video "${videoId}" not found in course "${courseId}"`,
+      );
+    }
+
+    return { data };
   }
 
   // ─── Update ───────────────────────────────────────────────────────────────────

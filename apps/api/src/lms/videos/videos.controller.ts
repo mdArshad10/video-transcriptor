@@ -38,6 +38,16 @@ export class VideosController {
     return this.videosService.getCourseVideos(courseId);
   }
 
+  /** GET /courses/:courseId/videos/:videoId */
+  @Get('courses/:courseId/videos/:videoId')
+  findOne(
+    @Param('courseId') courseId: string,
+    @Param('videoId') videoId: string,
+  ) {
+    this.logger.log(`get video ${videoId} in course ${courseId}`);
+    return this.videosService.getCourseVideoById(courseId, videoId);
+  }
+
   // ─── Standalone /videos/:id ────────────────────────────────────────────────
 
   /** PATCH /videos/:id */

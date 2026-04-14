@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Plus, Play, Clock, CheckCircle2, Upload, Loader } from 'lucide-react';
 import { VideoFormDialog } from '@/components/VideoFormDialog';
-import { type Video, getProgressForVideo, formatDuration } from "@/utils/mock-data";
+import { getProgressForVideo, formatDuration } from "@/utils/mock-data";
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Progress } from '@workspace/ui/components/progress';
-import { useCreateVideoMutation, useGetCourseVideosQuery, useUpdateVideoMutation } from '@/store/api/videoApi';
+import { type Video, useCreateVideoMutation, useGetCourseVideosQuery, useUpdateVideoMutation } from '@/store/api/videoApi';
 import { toast } from 'sonner';
 import { useGetCourseByIdQuery } from '@/store/api/courseApi';
 
@@ -94,7 +94,7 @@ const CourseDetailPage = () => {
                 body: {
                     title: data.title,
                     description: data.description || undefined,
-                    storageKey: data.storage_key,
+                    storageKey: data.raw_storage_key || editingVideo.raw_storage_key,
                     durationSeconds: data.duration_seconds || undefined,
                     thumbnailUrl: data.thumbnail_url || undefined,
                     videoOrder: data.video_order,
@@ -108,7 +108,7 @@ const CourseDetailPage = () => {
                 body: {
                     title: data.title || '',
                     description: data.description || undefined,
-                    storageKey: data.storage_key || '',
+                    storageKey: data.raw_storage_key || '',
                     durationSeconds: data.duration_seconds || undefined,
                     thumbnailUrl: undefined,
                     videoOrder: Number(videos?.data?.length) + 1,

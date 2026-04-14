@@ -7,7 +7,9 @@ export interface Video {
     course_id: string;
     title: string;
     description: string | null;
-    storage_key: string;
+    status: 'UPLOADING' | 'UPLOADED' | 'READY' | 'FAILED';
+    raw_storage_key: string;
+    hls_Master_Url: string | null;
     duration_seconds: number | null;
     thumbnail_url: string | null;
     video_order: number;
@@ -31,7 +33,7 @@ export interface CreateVideoRequest {
     isPublished?: boolean;
 }
 
-export type UpdateVideoRequest = Partial<CreateVideoRequest> & { status?: 'UPLOADING' | 'UPLOADED' | 'FAILED' };
+export type UpdateVideoRequest = Partial<CreateVideoRequest> & { status?: 'UPLOADING' | 'UPLOADED' | 'READY' | 'FAILED' };
 
 // ─── API slice ────────────────────────────────────────────────────────────────
 
@@ -63,6 +65,15 @@ export const videoApi = baseApi.injectEndpoints({
                         { type: 'Video', id: `COURSE_${courseId}` },
                     ]
                     : [{ type: 'Video', id: `COURSE_${courseId}` }],
+        }),
+
+        /** GET /courses/:courseId/videos/:videoId — fetch one video from a course */
+        getCourseVideoById: builder.query<{ data: Video }, { courseId: string; videoId: string }>({
+            query: ({ courseId, videoId }) => ({
+                url: `courses/${courseId}/videos/${videoId}`,
+                method: 'GET',
+            }),
+            providesTags: (_result, _error, { videoId }) => [{ type: 'Video', id: videoId }],
         }),
 
         /** PATCH /videos/:id — partially update a video */
@@ -98,6 +109,7 @@ export const videoApi = baseApi.injectEndpoints({
 export const {
     useCreateVideoMutation,
     useGetCourseVideosQuery,
+    useGetCourseVideoByIdQuery,
     useUpdateVideoMutation,
     useDeleteVideoMutation,
 } = videoApi;

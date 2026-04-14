@@ -1,44 +1,44 @@
 import { useParams, useNavigate } from 'react-router';
-import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Loader, Play } from 'lucide-react';
 
-import { mockCourses, mockVideos, getProgressForVideo, getVideosForCourse, formatDuration } from "@/utils/mock-data";
+import { formatDuration } from "@/utils/mock-data";
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import { Slider } from '@workspace/ui/components/slider';
+import { useGetCourseByIdQuery } from '@/store/api/courseApi';
+import { useGetMyProgressQuery } from '@/store/api/progressApi';
+import { useGetCourseVideoByIdQuery, useGetCourseVideosQuery } from '@/store/api/videoApi';
+import { MyPlayer } from '@/components/MyPlayer';
 
 const VideoPlayerPage = () => {
   const { courseId, videoId } = useParams<{ courseId: string; videoId: string }>();
   const navigate = useNavigate();
-  const video = mockVideos.find(v => v._id === videoId);
-  const course = mockCourses.find(c => c._id === courseId);
-  const courseVideos = getVideosForCourse(courseId || '');
-  const progress = getProgressForVideo(videoId || '');
+  const { data: courseResponse, isLoading: isCourseLoading } = useGetCourseByIdQuery(courseId || '', {
+    skip: !courseId,
+  });
+  const { data: videoResponse, isLoading: isVideoLoading } = useGetCourseVideoByIdQuery(
+    { courseId: courseId || '', videoId: videoId || '' },
+    { skip: !courseId || !videoId },
+  );
+  const { data: videosResponse, isLoading: isVideosLoading } = useGetCourseVideosQuery(courseId || '', {
+    skip: !courseId,
+  });
+  const { data: progressResponse, isLoading: isProgressLoading } = useGetMyProgressQuery(courseId || '', {
+    skip: !courseId,
+  });
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(progress?.last_position_seconds || 0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(80);
-  const [showControls, setShowControls] = useState(true);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
+  const course = courseResponse?.data;
+  const video = videoResponse?.data;
+  const courseVideos = videosResponse?.data ?? [];
+  const progress = progressResponse?.data.find((item) => item.video_id === videoId);
   const duration = video?.duration_seconds || 300;
 
-  useEffect(() => {
-    if (isPlaying) {
-      timerRef.current = setInterval(() => {
-        setCurrentTime(prev => {
-          if (prev >= duration) {
-            setIsPlaying(false);
-            return duration;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    }
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [isPlaying, duration]);
+  if (isCourseLoading || isVideoLoading || isVideosLoading || isProgressLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!video || !course) {
     return (
@@ -47,11 +47,6 @@ const VideoPlayerPage = () => {
       </div>
     );
   }
-
-  const currentIndex = courseVideos.findIndex(v => v._id === videoId);
-  const prevVideo = currentIndex > 0 ? courseVideos[currentIndex - 1] : null;
-  const nextVideo = currentIndex < courseVideos.length - 1 ? courseVideos[currentIndex + 1] : null;
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -75,90 +70,39 @@ const VideoPlayerPage = () => {
       {/* Video Player Area */}
       <div className="flex-1 flex flex-col lg:flex-row">
         <div className="flex-1">
-          <div
-            className="relative bg-card aspect-video w-full flex items-center justify-center cursor-pointer group"
-            onClick={() => setIsPlaying(!isPlaying)}
-            onMouseEnter={() => setShowControls(true)}
-            onMouseLeave={() => !isPlaying || setShowControls(true)}
-          >
-            {/* Mock video surface */}
-            <div className="absolute inset-0 bg-gradient-to-br from-secondary to-card flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3 glow-primary">
-                  {isPlaying ? (
-                    <Pause className="w-8 h-8 text-primary" />
-                  ) : (
+          <div className="bg-card aspect-video w-full overflow-hidden">
+            {video.hls_Master_Url ? (
+              <MyPlayer src={video.hls_Master_Url} thumbnail_url={video?.thumbnail_url ?? undefined} />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-secondary to-card flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3 glow-primary">
                     <Play className="w-8 h-8 text-primary ml-1" />
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground font-display">
-                  {isPlaying ? 'Playing' : 'Click to play'} — Mock HLS Stream
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">storage_key: {video.storage_key}</p>
-              </div>
-            </div>
-
-            {/* Controls overlay */}
-            <motion.div
-              initial={false}
-              animate={{ opacity: showControls ? 1 : 0 }}
-              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 to-transparent p-4 pt-12"
-            >
-              {/* Seek bar */}
-              <Slider
-                value={[currentTime]}
-                max={duration}
-                step={1}
-                onValueChange={([v]) => setCurrentTime(v)}
-                className="mb-3"
-              />
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground" disabled={!prevVideo}
-                    onClick={(e) => { e.stopPropagation(); if (prevVideo) navigate(`/courses/${courseId}/videos/${prevVideo._id}`); }}>
-                    <SkipBack className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground"
-                    onClick={(e) => { e.stopPropagation(); setIsPlaying(!isPlaying); }}>
-                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground" disabled={!nextVideo}
-                    onClick={(e) => { e.stopPropagation(); if (nextVideo) navigate(`/courses/${courseId}/videos/${nextVideo._id}`); }}>
-                    <SkipForward className="w-4 h-4" />
-                  </Button>
-
-                  <span className="text-xs text-muted-foreground ml-2 font-mono">
-                    {formatDuration(currentTime)} / {formatDuration(duration)}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground"
-                    onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); }}>
-                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  </Button>
-                  <div className="w-20 hidden sm:block" onClick={e => e.stopPropagation()}>
-                    <Slider
-                      value={[isMuted ? 0 : volume]}
-                      max={100}
-                      step={1}
-                      onValueChange={([v]) => { setVolume(v); setIsMuted(v === 0); }}
-                    />
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground"
-                    onClick={(e) => e.stopPropagation()}>
-                    <Maximize className="w-4 h-4" />
-                  </Button>
+                  <p className="text-sm text-muted-foreground font-display">
+                    Video not processed yet
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    raw: {video.raw_storage_key}
+                  </p>
                 </div>
               </div>
-            </motion.div>
+            )}
           </div>
 
           {/* Video info */}
           <div className="p-6">
             <h2 className="text-2xl font-display font-bold text-foreground mb-2">{video.title}</h2>
             {video.description && <p className="text-secondary-foreground">{video.description}</p>}
+            <div className="mt-4 flex items-center gap-3 text-sm text-muted-foreground">
+              <span>{formatDuration(duration)}</span>
+              <span>{video.status}</span>
+            </div>
+            {video.hls_Master_Url && (
+              <p className="mt-2 text-xs text-muted-foreground break-all">
+                hls: {video.hls_Master_Url}
+              </p>
+            )}
           </div>
         </div>
 
@@ -169,12 +113,12 @@ const VideoPlayerPage = () => {
           </div>
           <div className="overflow-y-auto max-h-[60vh] lg:max-h-[calc(100vh-120px)]">
             {courseVideos.map(v => {
-              const vProg = getProgressForVideo(v._id);
+              const vProg = progressResponse?.data.find((item) => item.video_id === v._id);
               const isActive = v._id === videoId;
               return (
                 <button
                   key={v._id}
-                  onClick={() => { navigate(`/courses/${courseId}/videos/${v._id}`); setCurrentTime(0); setIsPlaying(false); }}
+                  onClick={() => { navigate(`/courses/${courseId}/videos/${v._id}`); }}
                   className={`w-full text-left p-3 flex items-center gap-3 transition-colors border-b border-border ${isActive ? 'bg-primary/10 border-l-2 border-l-primary' : 'hover:bg-secondary/50'
                     }`}
                 >
