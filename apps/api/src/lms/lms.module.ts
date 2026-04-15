@@ -19,6 +19,7 @@ import {
   VideoProgress,
   VideoProgressSchema,
 } from '@app/database';
+import { CloudfrontService } from './cloudfront/cloudfront.service';
 
 @Module({
   imports: [
@@ -29,7 +30,20 @@ import {
       { name: VideoProgress.name, schema: VideoProgressSchema },
     ]),
   ],
-  controllers: [LmsController, LmsCoursesController, VideosController, ProgressController],
-  providers: [LmsService, CourseService, VideosService, ProgressService, StorageService],
+  controllers: [
+    LmsController,
+    LmsCoursesController,
+    VideosController,
+    ProgressController,
+  ],
+  providers: [
+    LmsService,
+    CourseService,
+    VideosService,
+    ProgressService,
+    StorageService,
+    CloudfrontService,
+  ],
+  exports: [StorageService],
 })
-export class LmsModule { }
+export class LmsModule {}

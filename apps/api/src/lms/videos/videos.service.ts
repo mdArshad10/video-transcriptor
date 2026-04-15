@@ -50,7 +50,8 @@ export class VideosService {
         updated_by: null,
       });
 
-      const url = await this.storageService.createPreSignedUrl(rawStorageKey);
+      const url =
+        await this.storageService.createPutPreSignedUrl(rawStorageKey);
 
       return { message: 'video created', data: video, url };
     } catch (err: any) {

@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { Video, VideoDocument } from '@app/database';
+import { StorageService } from './lms/storage/storage.service';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -18,6 +19,7 @@ export class AppService implements OnModuleInit {
 
   constructor(
     private readonly configService: ConfigService,
+    private readonly storageService: StorageService,
     @InjectModel(Video.name)
     private readonly videoModel: Model<VideoDocument>,
   ) {
@@ -108,7 +110,7 @@ export class AppService implements OnModuleInit {
 
     const courseId = parts[2];
     const storageVideoId = parts[4];
-    const hlsMasterUrl = this.buildPlaybackUrl(key);
+    const hlsMasterUrl = await this.buildPlaybackUrl(key);
 
     const video = await this.videoModel
       .findOne({
@@ -141,13 +143,20 @@ export class AppService implements OnModuleInit {
     this.logger.log(`Marked video ${video._id} as READY`);
   }
 
-  private buildPlaybackUrl(key: string) {
+  private async buildPlaybackUrl(key: string) {
+    const bucket = this.configService.getOrThrow<string>(
+      'AWS_S3_DESTINATION_BUCKET',
+    );
+    // const expiresIn =
+    //   Number(this.configService.get<string>('AWS_GET_PRE_SIGNED_EXPIRE_DAYS')) * 24 *60 * 60;
+    // return this.storageService.createGetPreSignedUrl(key, bucket, expiresIn);
     if (this.hlsBaseUrl) {
       return `${this.hlsBaseUrl.replace(/\/+$/, '')}/${key}`;
     }
 
-    const bucket = this.configService.getOrThrow<string>('AWS_S3_BUCKET_NAME');
-    const endpoint = this.configService.getOrThrow<string>('AWS_ENDPOINT_URL').replace(/\/+$/, '');
+    const endpoint = this.configService
+      .getOrThrow<string>('AWS_ENDPOINT_URL')
+      .replace(/\/+$/, '');
     return `${endpoint}/${bucket}/${key}`;
   }
 }

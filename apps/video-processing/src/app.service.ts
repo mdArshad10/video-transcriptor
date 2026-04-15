@@ -125,14 +125,14 @@ export class AppService implements OnModuleInit {
   }
 
   private async processVideo(bucket: string, key: string) {
-    const parts = key.split('/')
+    const parts = key?.split('/')
     const videoId = parts[4]; // adjust if needed
     const courseId = parts[2];
     const inputPath = path.join(this.processingDir, `${videoId}-input.mp4`);
     const outputDir = path.join(this.processingDir, `${videoId}-hls`);
-    // const processed_video_s3_bucket = this.configService.getOrThrow<string>(
-    //   'AWS_S3_PROCESSED_VIDEO_BUCKET_NAME',
-    // );
+    const s3_destination_bucket = this.configService.getOrThrow<string>(
+      'AWS_S3_DESTINATION_BUCKET',
+    );
 
     try {
       // 1. Download file from S3 and save locally
@@ -152,11 +152,7 @@ export class AppService implements OnModuleInit {
 
       // 3. Upload HLS to S3
       console.log("Step 4: Uploading HLS to S3...");
-      await this.uploadFolderToS3(
-        bucket,
-        outputDir,
-        s3Prefix,
-      );
+      await this.uploadFolderToS3(s3_destination_bucket, outputDir, s3Prefix);
 
       console.log("Step 5: Cleanup");
     } catch (error) {
