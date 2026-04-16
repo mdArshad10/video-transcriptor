@@ -110,7 +110,7 @@ export class AppService implements OnModuleInit {
 
     const courseId = parts[2];
     const storageVideoId = parts[4];
-    const hlsMasterUrl = await this.buildPlaybackUrl(key);
+    // const hlsMasterUrl = await this.buildPlaybackUrl(key);
 
     const video = await this.videoModel
       .findOne({
@@ -134,7 +134,7 @@ export class AppService implements OnModuleInit {
       { _id: video._id, status: { $ne: 'READY' } },
       {
         $set: {
-          hls_Master_Url: hlsMasterUrl,
+          hls_Master_Url: key,
           status: 'READY',
         },
       },

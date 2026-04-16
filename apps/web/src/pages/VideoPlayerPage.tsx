@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { ArrowLeft, CheckCircle2, Loader, Play } from 'lucide-react';
 
@@ -5,7 +6,7 @@ import { formatDuration } from "@/utils/mock-data";
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { useGetCourseByIdQuery } from '@/store/api/courseApi';
-import { useGetMyProgressQuery } from '@/store/api/progressApi';
+import { useGetMyProgressQuery, useUpsertProgressMutation } from '@/store/api/progressApi';
 import { useGetCourseVideoByIdQuery, useGetCourseVideosQuery } from '@/store/api/videoApi';
 import { MyPlayer } from '@/components/MyPlayer';
 
@@ -25,12 +26,64 @@ const VideoPlayerPage = () => {
   const { data: progressResponse, isLoading: isProgressLoading } = useGetMyProgressQuery(courseId || '', {
     skip: !courseId,
   });
+  const [upsertProgress] = useUpsertProgressMutation();
 
   const course = courseResponse?.data;
   const video = videoResponse?.data;
   const courseVideos = videosResponse?.data ?? [];
   const progress = progressResponse?.data.find((item) => item.video_id === videoId);
   const duration = video?.duration_seconds || 300;
+  const lastSyncedPositionRef = useRef(0);
+
+  useEffect(() => {
+    lastSyncedPositionRef.current = progress?.last_position_seconds ?? 0;
+  }, [videoId, progress?.last_position_seconds]);
+
+  const persistProgress = useCallback(
+    async (
+      positionSeconds: number,
+      options?: { completed?: boolean; force?: boolean },
+    ) => {
+      if (!videoId) return;
+
+      const safePosition = Math.max(0, Math.floor(positionSeconds));
+      const completed = options?.completed ?? false;
+      const force = options?.force ?? false;
+      const secondsDelta = Math.abs(safePosition - lastSyncedPositionRef.current);
+
+      if (!force && !completed && secondsDelta < 3) {
+        return;
+      }
+
+      try {
+        await upsertProgress({
+          videoId,
+          body: {
+            lastPositionSeconds: safePosition,
+            ...(completed ? { completed: true } : {}),
+          },
+        }).unwrap();
+        lastSyncedPositionRef.current = safePosition;
+      } catch (error) {
+        console.error('Failed to persist video progress', error);
+      }
+    },
+    [upsertProgress, videoId],
+  );
+
+  const handlePausePosition = useCallback(
+    (seconds: number) => {
+      void persistProgress(seconds);
+    },
+    [persistProgress],
+  );
+
+  const handleCompleted = useCallback(
+    (seconds: number) => {
+      void persistProgress(seconds, { completed: true, force: true });
+    },
+    [persistProgress],
+  );
 
   if (isCourseLoading || isVideoLoading || isVideosLoading || isProgressLoading) {
     return (
@@ -72,7 +125,13 @@ const VideoPlayerPage = () => {
         <div className="flex-1">
           <div className="bg-card aspect-video w-full overflow-hidden">
             {video.hls_Master_Url ? (
-              <MyPlayer src={video.hls_Master_Url} thumbnail_url={video?.thumbnail_url ?? undefined} />
+              <MyPlayer
+                src={video.hls_Master_Url}
+                thumbnail_url={video?.thumbnail_url ?? undefined}
+                initialPositionSeconds={progress?.last_position_seconds ?? 0}
+                onPausePosition={handlePausePosition}
+                onCompleted={handleCompleted}
+              />
             ) : (
               <div className="h-full w-full bg-gradient-to-br from-secondary to-card flex items-center justify-center">
                 <div className="text-center">
@@ -116,7 +175,7 @@ const VideoPlayerPage = () => {
               const vProg = progressResponse?.data.find((item) => item.video_id === v._id);
               const isActive = v._id === videoId;
               return (
-                <button
+                <Button
                   key={v._id}
                   onClick={() => { navigate(`/courses/${courseId}/videos/${v._id}`); }}
                   className={`w-full text-left p-3 flex items-center gap-3 transition-colors border-b border-border ${isActive ? 'bg-primary/10 border-l-2 border-l-primary' : 'hover:bg-secondary/50'
@@ -129,7 +188,7 @@ const VideoPlayerPage = () => {
                     <p className={`text-sm truncate ${isActive ? 'text-primary font-medium' : 'text-foreground'}`}>{v.title}</p>
                     <p className="text-xs text-muted-foreground">{formatDuration(v.duration_seconds)}</p>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>
