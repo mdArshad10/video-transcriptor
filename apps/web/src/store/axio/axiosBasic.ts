@@ -34,7 +34,6 @@ const axiosBaseQuery = (
 ): BaseQueryFn<BaseQueryArgs, unknown, BaseQueryError> =>
     async ({ url, method, data, params, headers, responseType, signal }) => {
         try {
-            console.log({ baseUrl, url })
             const result: AxiosResponse<BaseQueryResponse<any>> = await axiosInstance({
                 url: baseUrl + url,
                 method,
@@ -45,16 +44,10 @@ const axiosBaseQuery = (
                 signal
             });
 
-            console.log({ result });
-
             // Return in RTK Query expected format: { data: ... }
             return { data: result.data };
         } catch (axiosError) {
-            console.log(axiosError);
-
             const err = axiosError as AxiosError<BaseQueryResponse<any>>;
-            console.log(err);
-            console.log(url)
 
             // Return error in RTK Query expected format: { error: ... }
             return {

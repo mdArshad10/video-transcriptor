@@ -18,6 +18,7 @@ import {
   ListCoursesQueryDto,
   UpdateCourseDto,
 } from './dto';
+import { AuthUser } from '../../auth/interfaces/auth-user.interface';
 
 @Injectable()
 export class CourseService {
@@ -34,7 +35,7 @@ export class CourseService {
   // ─── Create ──────────────────────────────────────────────────────────────────
 
   /** Create a new course */
-  async createCourse(dto: CreateCourseDto) {
+  async createCourse(dto: CreateCourseDto, user: AuthUser) {
     this.logger.log(`Creating course: "${dto.title}"`);
 
     const course = await this.courseModel.create({
@@ -42,8 +43,7 @@ export class CourseService {
       description: dto.description,
       status: dto.status,
       thumbnail_url: dto.thumbnailUrl ?? null,
-      // TODO: replace hardcoded IDs with real user from JWT when auth is wired
-      owner_id: 'system',
+      owner_id: user.vendorId || user.sub,
       created_by: null,
       updated_by: null,
     });
@@ -59,7 +59,7 @@ export class CourseService {
    *
    * TODO: replace hardcoded userId with real user from JWT when auth is wired.
    */
-  async getMyCourses(query: ListCoursesQueryDto) {
+  async getMyCourses(query: ListCoursesQueryDto, user: AuthUser) {
     const {
       ownedByMe,
       assignedToMe,
@@ -76,14 +76,13 @@ export class CourseService {
     }
 
     if (ownedByMe) {
-      // TODO: swap 'system' with req.user.id from auth guard
-      filter.owner_id = 'system';
+      filter.owner_id = user.vendorId || user.sub;
     }
 
     if (assignedToMe) {
       // Find all course IDs assigned to the current user
       const assignments = await this.assignmentModel
-        .find({ target_type: 'user', target_id: 'system' })
+        .find({ target_type: 'user', target_id: user.sub })
         .select('course_id')
         .lean();
 
@@ -161,7 +160,7 @@ export class CourseService {
   // ─── Assignment ───────────────────────────────────────────────────────────────
 
   /** Assign a course to a user / group / organisation */
-  async assign(id: string, dto: CreateAssignmentDto) {
+  async assign(id: string, dto: CreateAssignmentDto, _user: AuthUser) {
     this.logger.log(`Assigning course ${id} → ${dto.targetType}:${dto.targetId}`);
 
     // Ensure the course exists and is not soft-deleted
@@ -175,7 +174,6 @@ export class CourseService {
         course_id: course._id,
         target_type: dto.targetType,
         target_id: dto.targetId,
-        // TODO: replace with req.user._id from auth guard
         assigned_by: null,
       });
 

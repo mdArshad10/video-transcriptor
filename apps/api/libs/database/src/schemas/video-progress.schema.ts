@@ -14,8 +14,8 @@ export class VideoProgress {
   @Prop({ type: Types.ObjectId, ref: 'Course', required: true })
   course_id: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  user_id: Types.ObjectId;
+  @Prop({ type: String, required: true })
+  user_id: string;
 
   /** The playback position (in seconds) where the user last stopped */
   @Prop({ type: Number, default: 0 })

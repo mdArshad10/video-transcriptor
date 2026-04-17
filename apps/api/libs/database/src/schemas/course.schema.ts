@@ -35,10 +35,10 @@ export class Course {
   @Prop({ type: String })
   owner_id: string | null;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
+  @Prop({ type: Types.ObjectId })
   created_by: Types.ObjectId | null;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
+  @Prop({ type: Types.ObjectId })
   updated_by: Types.ObjectId | null;
 
   /** Soft-delete timestamp */

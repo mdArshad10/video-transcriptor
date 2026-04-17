@@ -1,3 +1,4 @@
+import { API } from '@/utils/url';
 import { baseApi } from './baseApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -29,7 +30,8 @@ export const progressApi = baseApi.injectEndpoints({
         /** POST /videos/:videoId/progress — upsert user progress for a video */
         upsertProgress: builder.mutation<{ message: string; data: VideoProgress }, { videoId: string; body: UpdateProgressRequest }>({
             query: ({ videoId, body }) => ({
-                url: `videos/${videoId}/progress`,
+                // url: `videos/${videoId}/progress`,
+                url:API.PROGRESS.UPSERT_PROGRESS.replace(':videoId',videoId),
                 method: 'POST',
                 data: body,
             }),
@@ -42,7 +44,7 @@ export const progressApi = baseApi.injectEndpoints({
         /** GET /progress/my — list all video progress for current user (optionally filtered by course) */
         getMyProgress: builder.query<{ data: VideoProgress[]; total: number }, string | void>({
             query: (courseId) => ({
-                url: 'progress/my',
+                url: API.PROGRESS.MY_PROCESS,
                 method: 'GET',
                 params: courseId ? { courseId } : {},
             }),

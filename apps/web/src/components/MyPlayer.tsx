@@ -1,10 +1,24 @@
-import "@videojs/react/video/skin.css"
-import { createPlayer, videoFeatures } from "@videojs/react"
-import { VideoSkin } from "@videojs/react/video"
-import { HlsVideo } from "@videojs/react/media/hls-video"
-import { useCallback, useEffect, useMemo, useRef } from "react"
-
-const Player = createPlayer({ features: videoFeatures })
+import ReactPlayer from "react-player"
+import {
+  MediaController,
+  MediaControlBar,
+  MediaTimeRange,
+  MediaTimeDisplay,
+  MediaVolumeRange,
+  MediaPlaybackRateButton,
+  MediaPlayButton,
+  MediaSeekBackwardButton,
+  MediaSeekForwardButton,
+  MediaMuteButton,
+  MediaFullscreenButton,
+  MediaPipButton,
+  MediaCaptionsButton,
+  MediaLoadingIndicator,
+  MediaGestureReceiver,
+  MediaAirplayButton,
+} from "media-chrome/react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { AWS_S3_DESTINATION_BUCKET } from "@/utils/url"
 
 interface MyPlayerProps {
   src: string
@@ -12,6 +26,10 @@ interface MyPlayerProps {
   initialPositionSeconds?: number
   onPausePosition?: (seconds: number) => void
   onCompleted?: (seconds: number) => void
+  /** Optional title shown in the control bar overlay */
+  title?: string
+  /** Allow autoplay (muted) on mount */
+  autoPlay?: boolean
 }
 
 export const MyPlayer = ({
@@ -20,94 +38,251 @@ export const MyPlayer = ({
   initialPositionSeconds = 0,
   onPausePosition,
   onCompleted,
+  title,
+  autoPlay = false,
 }: MyPlayerProps) => {
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  // ─── Refs ────────────────────────────────────────────────────────────────
+  // In the new react-player API the ref callback receives the raw HTMLVideoElement.
+  const playerRef = useRef<HTMLVideoElement | null>(null)
   const hasRestoredRef = useRef(false)
   const latestPositionRef = useRef(0)
 
-  const getVideoElement = useCallback(() => {
-    return containerRef.current?.querySelector("video") ?? null
+  // ─── State ───────────────────────────────────────────────────────────────
+  const [isReady, setIsReady] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(autoPlay)
+  const [hasError, setHasError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+
+  // ─── Callback ref (replaces useRef passed directly) ──────────────────────
+  // react-player calls this with the underlying <video> element, so we
+  // store it and can access all native HTMLVideoElement properties directly.
+  const setPlayerRef = useCallback((player: HTMLVideoElement) => {
+    if (!player) return
+    playerRef.current = player
   }, [])
 
+  // ─── Normalized initial position ─────────────────────────────────────────
   const normalizedInitialPosition = useMemo(() => {
-    if (!Number.isFinite(initialPositionSeconds) || initialPositionSeconds <= 0) {
+    if (
+      !Number.isFinite(initialPositionSeconds) ||
+      initialPositionSeconds <= 0
+    ) {
       return 0
     }
     return Math.floor(initialPositionSeconds)
   }, [initialPositionSeconds])
 
-  const handleTimeUpdate = useCallback(() => {
-    const videoEl = getVideoElement()
-    if (!videoEl) return
-    latestPositionRef.current = Math.floor(videoEl.currentTime ?? 0)
-  }, [getVideoElement])
+  // ─── Reset when src changes ───────────────────────────────────────────────
+  useEffect(() => {
+    hasRestoredRef.current = false
+    latestPositionRef.current = 0
+    setIsReady(false)
+    setHasError(false)
+    setErrorMessage("")
+    setIsPlaying(autoPlay)
+  }, [src, normalizedInitialPosition, autoPlay])
 
-  const handlePause = useCallback(() => {
-    const videoEl = getVideoElement()
-    const current = Math.floor(videoEl?.currentTime ?? latestPositionRef.current ?? 0)
-    latestPositionRef.current = current
-    onPausePosition?.(current)
-  }, [getVideoElement, onPausePosition])
+  // ─── Seek to initial position once player is ready ────────────────────────
+  const handleReady = useCallback(() => {
+    setIsReady(true)
 
-  const handleEnded = useCallback(() => {
-    const videoEl = getVideoElement()
-    const current = Math.floor(videoEl?.currentTime ?? latestPositionRef.current ?? 0)
-    latestPositionRef.current = current
-    onCompleted?.(current)
-  }, [getVideoElement, onCompleted])
-
-  const handleLoadedMetadata = useCallback(() => {
     if (hasRestoredRef.current || normalizedInitialPosition <= 0) return
-    const videoEl = getVideoElement()
-    if (!videoEl) return
 
+    const player = playerRef.current
+    if (!player) return
+
+    const duration = player.duration
     const maxSeekable =
-      Number.isFinite(videoEl.duration) && videoEl.duration > 1
-        ? Math.floor(videoEl.duration - 1)
+      Number.isFinite(duration) && duration > 1
+        ? Math.floor(duration - 1)
         : normalizedInitialPosition
     const seekTo = Math.min(normalizedInitialPosition, maxSeekable)
 
     if (seekTo > 0) {
-      videoEl.currentTime = seekTo
+      player.currentTime = seekTo
       latestPositionRef.current = seekTo
       hasRestoredRef.current = true
     }
-  }, [getVideoElement, normalizedInitialPosition])
+  }, [normalizedInitialPosition])
 
-  useEffect(() => {
-    hasRestoredRef.current = false
-    latestPositionRef.current = 0
-  }, [src, normalizedInitialPosition])
+  // ─── Track current playback position (fires ~250 ms) ─────────────────────
+  const handleTimeUpdate = useCallback(() => {
+    const player = playerRef.current
+    if (!player) return
+    latestPositionRef.current = Math.floor(player.currentTime)
+  }, [])
 
+  // ─── Track buffered / loaded progress ────────────────────────────────────
+  const handleProgress = useCallback(() => {
+    // onProgress fires when buffered ranges change; no argument in new API.
+    // Position tracking is handled by onTimeUpdate above.
+  }, [])
+
+  // ─── Pause handler ────────────────────────────────────────────────────────
+  const handlePause = useCallback(() => {
+    const player = playerRef.current
+    const current = Math.floor(
+      player?.currentTime ?? latestPositionRef.current ?? 0
+    )
+    latestPositionRef.current = current
+    onPausePosition?.(current)
+    setIsPlaying(false)
+  }, [onPausePosition])
+
+  // ─── Ended handler ────────────────────────────────────────────────────────
+  const handleEnded = useCallback(() => {
+    const player = playerRef.current
+    const current = Math.floor(
+      player?.currentTime ?? latestPositionRef.current ?? 0
+    )
+    latestPositionRef.current = current
+    onCompleted?.(current)
+    setIsPlaying(false)
+  }, [onCompleted])
+
+  // ─── Error handler ────────────────────────────────────────────────────────
+  const handleError = useCallback((error: unknown) => {
+    console.error("[MyPlayer] Playback error:", error)
+    const msg =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "An unknown playback error occurred."
+    setHasError(true)
+    setErrorMessage(msg)
+  }, [])
+
+  // ─── Tab visibility: persist position on hide ─────────────────────────────
   useEffect(() => {
-    const persistOnTabHidden = () => {
-      if (!document.hidden) return
-      handlePause()
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        handlePause()
+      }
     }
-    document.addEventListener("visibilitychange", persistOnTabHidden)
+    document.addEventListener("visibilitychange", handleVisibilityChange)
     return () => {
-      document.removeEventListener("visibilitychange", persistOnTabHidden)
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+      // Persist on unmount too
       handlePause()
     }
   }, [handlePause])
 
+  // ─── Full media URL ───────────────────────────────────────────────────────
+  const mediaUrl = `${AWS_S3_DESTINATION_BUCKET}/${src}`
+
+  // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <div ref={containerRef}>
-      <Player.Provider>
-        <VideoSkin poster={thumbnail_url} style={{
-          borderRadius: 0,
-          margin: "1rem",
-        }} >
-          <HlsVideo
-            src={src}
+    <div className="my-player-wrapper">
+      {hasError ? (
+        <div className="my-player-error" role="alert">
+          <span className="my-player-error-icon" aria-hidden="true">
+            ⚠
+          </span>
+          <p className="my-player-error-title">Playback failed</p>
+          {errorMessage && (
+            <p className="my-player-error-message">{errorMessage}</p>
+          )}
+          <button
+            className="my-player-error-retry"
+            onClick={() => {
+              setHasError(false)
+              setErrorMessage("")
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      ) : (
+        <MediaController
+          className="my-player-controller"
+          gesturesDisabled={false}
+        >
+          {/* ── ReactPlayer renders the actual <video> element.
+               The `slot="media"` prop tells media-chrome to treat it
+               as the controlled media source. ── */}
+          <ReactPlayer
+            ref={setPlayerRef}
+            slot="media"
+            className="react-player"
+            src={mediaUrl}
+            playing={isPlaying}
+            controls={false} // media-chrome owns the controls
             playsInline
-            onLoadedMetadata={handleLoadedMetadata}
-            onTimeUpdate={handleTimeUpdate}
+            muted={autoPlay} // autoplay requires muted in most browsers
+            width="100%"
+            height="100%"
+            style={{ display: "block" }}
+            light={
+              thumbnail_url
+                ? <img src={thumbnail_url} alt="Thumbnail" />
+                : false
+            }
+            onReady={handleReady}
+            onPlay={() => setIsPlaying(true)}
             onPause={handlePause}
             onEnded={handleEnded}
+            onTimeUpdate={handleTimeUpdate}
+            onProgress={handleProgress}
+            onError={handleError}
+            config={{
+              hls: {
+                maxBufferLength: 30,
+                maxMaxBufferLength: 60,
+                enableWorker: true,
+              },
+            }}
           />
-        </VideoSkin>
-      </Player.Provider>
+
+          {/* ── Loading indicator (shown while buffering) ── */}
+          <MediaLoadingIndicator slot="centered-chrome" noAutohide />
+
+          {/* ── Tap-to-play / gesture layer ── */}
+          <MediaGestureReceiver slot="centered-chrome" />
+
+          {/* ── Optional title overlay ── */}
+          {title && (
+            <div slot="top-chrome" className="my-player-title">
+              {title}
+            </div>
+          )}
+
+          {/* ── Main control bar ── */}
+          <MediaControlBar>
+            {/* Play / Pause */}
+            <MediaPlayButton />
+
+            {/* Seek ±10 s */}
+            <MediaSeekBackwardButton seekOffset={10} />
+            <MediaSeekForwardButton seekOffset={10} />
+
+            {/* Scrubber + time */}
+            <MediaTimeRange />
+            <MediaTimeDisplay showDuration />
+
+            {/* Volume */}
+            <MediaMuteButton />
+            <MediaVolumeRange />
+
+            {/* Captions toggle (visible when a text track is available) */}
+            <MediaCaptionsButton />
+
+            {/* Playback speed: 0.5× 1× 1.5× 2× */}
+            <MediaPlaybackRateButton rates={[0.5, 1, 1.25, 1.5, 2]} />
+
+            {/* Picture-in-Picture */}
+            <MediaPipButton />
+
+            {/* AirPlay (Safari only; hidden elsewhere automatically) */}
+            <MediaAirplayButton />
+
+            {/* Fullscreen */}
+            <MediaFullscreenButton />
+          </MediaControlBar>
+        </MediaController>
+      )}
     </div>
   )
 }
+
+export default MyPlayer

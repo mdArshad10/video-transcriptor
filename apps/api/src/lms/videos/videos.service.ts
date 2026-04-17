@@ -10,6 +10,7 @@ import { Video, VideoDocument } from '@app/database';
 import { CreateVideoDto, UpdateVideoDto } from './dto';
 import { StorageService } from '../storage/storage.service';
 import { randomUUID } from 'crypto';
+import { AuthUser } from '../../auth/interfaces/auth-user.interface';
 
 @Injectable()
 export class VideosService {
@@ -28,7 +29,7 @@ export class VideosService {
    * The schema enforces a compound unique index on (course_id, video_order),
    * so duplicate positions within the same course are rejected.
    */
-  async createVideo(courseId: string, dto: CreateVideoDto) {
+  async createVideo(courseId: string, dto: CreateVideoDto, _user: AuthUser) {
     this.logger.log(`Creating video "${dto.title}" in course ${courseId}`);
 
     const videoId = randomUUID();
@@ -45,7 +46,6 @@ export class VideosService {
         thumbnail_url: dto.thumbnailUrl ?? null,
         video_order: dto.videoOrder,
         is_published: dto.isPublished ?? false,
-        // TODO: replace with req.user._id from auth guard
         created_by: null,
         updated_by: null,
       });

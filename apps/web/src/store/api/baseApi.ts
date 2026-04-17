@@ -5,7 +5,7 @@ import axiosBaseQuery from '../axio/axiosBasic'
 // Define a service using a base URL and expected endpoints
 export const baseApi = createApi({
     reducerPath: 'baseApi',
-    baseQuery: axiosBaseQuery({ baseUrl: 'http://localhost:3000/' }),
-    tagTypes: ['Course', 'Video', 'Progress'],
+    baseQuery: axiosBaseQuery({ baseUrl: `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/` }),
+    tagTypes: ['Course', 'Video', 'Progress','Token'],
     endpoints: () => ({}),
 })

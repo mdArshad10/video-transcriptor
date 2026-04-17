@@ -1,3 +1,4 @@
+import { API } from '@/utils/url';
 import { baseApi } from './baseApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -77,7 +78,7 @@ export const courseApi = baseApi.injectEndpoints({
         /** POST /courses — create a new course */
         createCourse: builder.mutation<{ message: string; data: Course }, CreateCourseRequest>({
             query: (body) => ({
-                url: 'courses',
+                url: API.COURSE.ROUTE,
                 method: 'POST',
                 data: body,
             }),
@@ -87,7 +88,7 @@ export const courseApi = baseApi.injectEndpoints({
         /** GET /courses/my — list courses relevant to the current user */
         getMyCourses: builder.query<{ data: Course[]; meta: PaginationMeta }, ListCoursesQuery | void>({
             query: (params) => ({
-                url: 'courses/my',
+                url: API.COURSE.GET_MY_COURSE,
                 method: 'GET',
                 params: params ?? {},
             }),
@@ -103,7 +104,7 @@ export const courseApi = baseApi.injectEndpoints({
         /** PATCH /courses/:id — partially update a course */
         updateCourse: builder.mutation<{ message: string; data: Course }, { id: string; body: UpdateCourseRequest }>({
             query: ({ id, body }) => ({
-                url: `courses/${id}`,
+                url: `${API.COURSE.ROUTE}/${id}`,
                 method: 'PATCH',
                 data: body,
             }),
@@ -116,7 +117,7 @@ export const courseApi = baseApi.injectEndpoints({
         // GET /courses/:id - get a particular course
         getCourseById: builder.query<{ data: Course }, string>({
             query: (id) => ({
-                url: `courses/${id}`,
+                url: `${API.COURSE.ROUTE}/${id}`,
                 method: 'GET',
             }),
             providesTags: (_result, _error, id) => [{ type: 'Course', id }],
@@ -125,7 +126,8 @@ export const courseApi = baseApi.injectEndpoints({
         /** POST /courses/:id/assign — assign a course to a user/group/organisation */
         assignCourse: builder.mutation<{ message: string; data: CourseAssignment }, { id: string; body: CreateAssignmentRequest }>({
             query: ({ id, body }) => ({
-                url: `courses/${id}/assign`,
+                // url: `courses/${id}/assign`,
+                url: API.COURSE.ASSIGN_COURSE.replace(':id',id),
                 method: 'POST',
                 data: body,
             }),
@@ -135,7 +137,7 @@ export const courseApi = baseApi.injectEndpoints({
         /** DELETE /courses/:id — soft-delete a course */
         deleteCourse: builder.mutation<{ message: string; id: string }, string>({
             query: (id) => ({
-                url: `courses/${id}`,
+                url: `${API.COURSE.ROUTE}/${id}`,
                 method: 'DELETE',
             }),
             invalidatesTags: (_result, _error, id) => [

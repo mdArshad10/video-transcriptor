@@ -9,11 +9,16 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { VideosService } from './videos.service';
 import { CreateVideoDto, UpdateVideoDto } from './dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import type { AuthUser } from '../../auth/interfaces/auth-user.interface';
 
 @Controller()
+@UseGuards(JwtAuthGuard)
 export class VideosController {
   private readonly logger = new Logger(VideosController.name);
 
@@ -26,9 +31,10 @@ export class VideosController {
   create(
     @Param('courseId') courseId: string,
     @Body() dto: CreateVideoDto,
+    @CurrentUser() user: AuthUser,
   ) {
     this.logger.log(`create video in course ${courseId}`);
-    return this.videosService.createVideo(courseId, dto);
+    return this.videosService.createVideo(courseId, dto, user);
   }
 
   /** GET /courses/:courseId/videos */

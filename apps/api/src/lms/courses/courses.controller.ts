@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
 import {
@@ -18,8 +19,12 @@ import {
   ListCoursesQueryDto,
   UpdateCourseDto,
 } from './dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import type { AuthUser } from '../../auth/interfaces/auth-user.interface';
 
 @Controller('courses')
+@UseGuards(JwtAuthGuard)
 export class LmsCoursesController {
   private readonly logger = new Logger(LmsCoursesController.name);
 
@@ -29,9 +34,9 @@ export class LmsCoursesController {
 
   /** POST /courses */
   @Post()
-  create(@Body() dto: CreateCourseDto) {
+  create(@Body() dto: CreateCourseDto, @CurrentUser() user: AuthUser) {
     this.logger.log('create course');
-    return this.courseService.createCourse(dto);
+    return this.courseService.createCourse(dto, user);
   }
 
   // ─── Read ──────────────────────────────────────────────────────────────────
@@ -44,9 +49,9 @@ export class LmsCoursesController {
    * NOTE: this route MUST be declared before `:id` so NestJS matches it first.
    */
   @Get('my')
-  findMy(@Query() query: ListCoursesQueryDto) {
+  findMy(@Query() query: ListCoursesQueryDto, @CurrentUser() user: AuthUser) {
     this.logger.log(`findMy courses – query: ${JSON.stringify(query)}`);
-    return this.courseService.getMyCourses(query);
+    return this.courseService.getMyCourses(query, user);
   }
 
   @Get(":id")
@@ -68,9 +73,13 @@ export class LmsCoursesController {
 
   /** POST /courses/:id/assign */
   @Post(':id/assign')
-  assign(@Param('id') id: string, @Body() dto: CreateAssignmentDto) {
+  assign(
+    @Param('id') id: string,
+    @Body() dto: CreateAssignmentDto,
+    @CurrentUser() user: AuthUser,
+  ) {
     this.logger.log(`assign course ${id} to ${dto.targetType}:${dto.targetId}`);
-    return this.courseService.assign(id, dto);
+    return this.courseService.assign(id, dto, user);
   }
 
   // ─── Delete ────────────────────────────────────────────────────────────────

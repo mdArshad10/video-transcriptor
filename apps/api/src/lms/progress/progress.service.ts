@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Video, VideoDocument, VideoProgress, VideoProgressDocument } from '@app/database';
 import { UpdateProgressDto } from './dto';
+import { AuthUser } from '../../auth/interfaces/auth-user.interface';
 
 @Injectable()
 export class ProgressService {
@@ -27,9 +28,8 @@ export class ProgressService {
    * - The video document is fetched first so we can denormalise `course_id`
    *   into the progress record (needed for the course-level compound index).
    *
-   * TODO: replace hardcoded userId 'system' with req.user._id once auth is wired.
    */
-  async upsertProgress(videoId: string, dto: UpdateProgressDto) {
+  async upsertProgress(videoId: string, dto: UpdateProgressDto, user: AuthUser) {
     this.logger.log(`Upserting progress for video ${videoId}`);
 
     // Fetch the video to get its course_id (needed for indexing)
@@ -41,9 +41,6 @@ export class ProgressService {
     if (!video) {
       throw new NotFoundException(`Video with id "${videoId}" not found`);
     }
-
-    // TODO: swap placeholder with req.user._id from auth guard
-    const userId = new Types.ObjectId('000000000000000000000000');
 
     const patch: Record<string, unknown> = {
       course_id: video.course_id,
@@ -63,7 +60,7 @@ export class ProgressService {
       .findOneAndUpdate(
         {
           video_id: new Types.ObjectId(videoId),
-          user_id: userId,
+          user_id: user.sub,
         },
         { $set: patch },
         { upsert: true, new: true, setDefaultsOnInsert: true },
@@ -80,19 +77,15 @@ export class ProgressService {
    * Optionally supply `courseId` to scope the result to a single course
    * (hits the compound index `course_id + user_id`).
    *
-   * TODO: swap placeholder with req.user._id from auth guard.
    */
-  async getMyProgress(courseId?: string) {
+  async getMyProgress(user: AuthUser, courseId?: string) {
     this.logger.log(
       courseId
         ? `Fetching progress for current user in course ${courseId}`
         : 'Fetching all progress for current user',
     );
 
-    // TODO: swap placeholder with req.user._id from auth guard
-    const userId = new Types.ObjectId('000000000000000000000000');
-
-    const filter: Record<string, unknown> = { user_id: userId };
+    const filter: Record<string, unknown> = { user_id: user.sub };
 
     if (courseId) {
       filter.course_id = new Types.ObjectId(courseId);
