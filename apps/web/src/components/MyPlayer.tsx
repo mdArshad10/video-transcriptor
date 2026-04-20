@@ -53,14 +53,6 @@ export const MyPlayer = ({
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
 
-  // ─── Callback ref (replaces useRef passed directly) ──────────────────────
-  // react-player calls this with the underlying <video> element, so we
-  // store it and can access all native HTMLVideoElement properties directly.
-  const setPlayerRef = useCallback((player: HTMLVideoElement) => {
-    if (!player) return
-    playerRef.current = player
-  }, [])
-
   // ─── Normalized initial position ─────────────────────────────────────────
   const normalizedInitialPosition = useMemo(() => {
     if (
@@ -84,9 +76,8 @@ export const MyPlayer = ({
 
   // ─── Seek to initial position once player is ready ────────────────────────
   const handleReady = useCallback(() => {
-    setIsReady(true)
 
-    if (hasRestoredRef.current || normalizedInitialPosition <= 0) return
+    if (!isReady && hasRestoredRef.current || normalizedInitialPosition <= 0) return
 
     const player = playerRef.current
     if (!player) return
@@ -102,6 +93,7 @@ export const MyPlayer = ({
       player.currentTime = seekTo
       latestPositionRef.current = seekTo
       hasRestoredRef.current = true
+      setIsReady(true)
     }
   }, [normalizedInitialPosition])
 
@@ -202,7 +194,7 @@ export const MyPlayer = ({
                The `slot="media"` prop tells media-chrome to treat it
                as the controlled media source. ── */}
           <ReactPlayer
-            ref={setPlayerRef}
+            ref={playerRef}
             slot="media"
             className="react-player"
             src={mediaUrl}
@@ -248,7 +240,7 @@ export const MyPlayer = ({
           )}
 
           {/* ── Main control bar ── */}
-          <MediaControlBar>
+          <MediaControlBar className="my-player-control-bar bg-black flex gap-2">
             {/* Play / Pause */}
             <MediaPlayButton />
 
@@ -256,13 +248,13 @@ export const MyPlayer = ({
             <MediaSeekBackwardButton seekOffset={10} />
             <MediaSeekForwardButton seekOffset={10} />
 
-            {/* Scrubber + time */}
-            <MediaTimeRange />
-            <MediaTimeDisplay showDuration />
-
             {/* Volume */}
             <MediaMuteButton />
             <MediaVolumeRange />
+
+            {/* Scrubber + time */}
+            <MediaTimeRange />
+            <MediaTimeDisplay showDuration />
 
             {/* Captions toggle (visible when a text track is available) */}
             <MediaCaptionsButton />

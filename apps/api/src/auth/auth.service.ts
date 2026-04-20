@@ -6,9 +6,9 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { randomBytes, randomUUID } from 'crypto';
+import { randomBytes } from 'crypto';
 import { RefreshToken, RefreshTokenDocument } from '@app/database';
 import {
   ACCESS_TOKEN_TTL,
@@ -27,7 +27,7 @@ export class AuthService {
     private readonly refreshTokenModel: Model<RefreshTokenDocument>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   private normalizeMultilineKey(key: string | undefined): string {
     return (key || '').replace(/\\n/g, '\n').trim();
@@ -39,8 +39,8 @@ export class AuthService {
       this.logger.log('this token is ')
       this.logger.log(token)
       this.logger.log(this.configService.get<string>('JWT_PRIVATE_KEY'));
-      const publicKey =this.normalizeMultilineKey(
-            this.configService.get<string>('JWT_PRIVATE_KEY'));
+      const publicKey = this.normalizeMultilineKey(
+        this.configService.get<string>('JWT_PRIVATE_KEY'));
       const payload = await this.jwtService.verifyAsync(token, {
         algorithms: ['RS256'],
         publicKey,
@@ -85,31 +85,33 @@ export class AuthService {
 
   async createRefreshToken(
     user: AuthUser,
-  ): Promise<{ rawToken: string; expiresAt: string }> {
-    const tokenId = randomUUID();
+  ): Promise<{ rawToken: string }> {
+    const tokenId = new mongoose.Types.ObjectId();
     const tokenSecret = randomBytes(40).toString('hex');
+    // rawToken is what we send to the client — it contains the un-hashed secret
     const rawToken = `${tokenId}.${tokenSecret}`;
+    // hashedToken is what we store in the DB — never store the raw secret
     const hashedToken = await bcrypt.hash(rawToken, 10);
 
-    // const expiresAt = new Date();
-    // expiresAt.setDate(
-    //   expiresAt.getDate() +
-    //     (this.configService.get<number>('REFRESH_TOKEN_TTL_DAYS') ||
-    //       REFRESH_TOKEN_TTL_DAYS),
-    // );
-    const expiresAt = "15d"
+    const expiresAt = new Date();
+    expiresAt.setDate(
+      expiresAt.getDate() +
+      (this.configService.get<number>('REFRESH_TOKEN_TTL_DAYS') ||
+        REFRESH_TOKEN_TTL_DAYS),
+    );
 
     await this.refreshTokenModel.create({
-      token_id: tokenId,
+      _id: tokenId,
       user_id: user.sub,
       vendor_id: user.vendorId ?? null,
       role: user.role ?? null,
       hashed_token: hashedToken,
-      expires_at: new Date().getDate() + 15,
+      expires_at: expiresAt,
       is_revoked: false,
     });
 
-    return { rawToken, expiresAt };
+    // Return rawToken — the client sends this back on /auth/refresh
+    return { rawToken };
   }
 
   parseRefreshToken(rawToken: string): { tokenId: string } {
@@ -127,12 +129,12 @@ export class AuthService {
     user: AuthUser;
     accessToken: string;
     refreshToken: string;
-    refreshExpiresAt: string;
   }> {
     const { tokenId } = this.parseRefreshToken(rawToken);
 
+    // Query by _id (the ObjectId we stored as `_id` in createRefreshToken)
     const existingToken = await this.refreshTokenModel.findOne({
-      token_id: tokenId,
+      _id: tokenId,
     });
     if (!existingToken) {
       throw new UnauthorizedException('Invalid refresh token');
@@ -166,21 +168,21 @@ export class AuthService {
     };
 
     const accessToken = await this.issueAccessToken(user);
-    const { rawToken: refreshToken, expiresAt: refreshExpiresAt } =
+    const { rawToken: refreshToken } =
       await this.createRefreshToken(user);
 
     return {
       user,
       accessToken,
       refreshToken,
-      refreshExpiresAt,
+
     };
   }
 
   async revokeRefreshToken(rawToken: string): Promise<void> {
     const { tokenId } = this.parseRefreshToken(rawToken);
     await this.refreshTokenModel.updateOne(
-      { token_id: tokenId },
+      { _id: tokenId },
       { $set: { is_revoked: true, revoked_at: new Date() } },
     );
   }

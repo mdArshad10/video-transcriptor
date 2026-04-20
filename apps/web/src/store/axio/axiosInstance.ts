@@ -3,8 +3,10 @@ import type { InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
 import {
   clearAccessToken,
+  clearRefreshToken,
   selectAccessToken,
   setAccessToken,
+  setRefreshToken,
 } from '../auth/accessTokenStore';
 import type { AppDispatch, RootState } from '../store';
 
@@ -61,6 +63,8 @@ const redirectToAuthError = () => {
   }
 };
 
+// Returns the NEW ACCESS TOKEN (not the refresh token) so callers can
+// attach it to the Authorization header when retrying failed requests.
 const refreshAccessToken = async (): Promise<string | null> => {
   if (!refreshPromise) {
     refreshPromise = axios
@@ -75,12 +79,35 @@ const refreshAccessToken = async (): Promise<string | null> => {
         },
       )
       .then((response) => {
-        const nextToken = response.data?.accessToken ?? null;
-        store.dispatch(setAccessToken(nextToken));
-        return nextToken;
+        const nextAccessToken = response.data?.accessToken ?? null;
+        const nextRefreshToken = response.data?.refreshToken ?? null;
+
+        store.dispatch(setAccessToken(nextAccessToken));
+        store.dispatch(setRefreshToken(nextRefreshToken));
+
+        if (typeof window !== 'undefined') {
+          if (nextAccessToken) {
+            localStorage.setItem('accessToken', nextAccessToken);
+          } else {
+            localStorage.removeItem('accessToken');
+          }
+          if (nextRefreshToken) {
+            localStorage.setItem('refreshToken', nextRefreshToken);
+          } else {
+            localStorage.removeItem('refreshToken');
+          }
+        }
+
+        // Return the ACCESS TOKEN — callers use this for Bearer auth
+        return nextAccessToken;
       })
       .catch(() => {
         store.dispatch(clearAccessToken());
+        store.dispatch(clearRefreshToken());
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+        }
         return null;
       })
       .finally(() => {
@@ -91,9 +118,20 @@ const refreshAccessToken = async (): Promise<string | null> => {
   return refreshPromise;
 };
 
+// ─── Request Interceptor ──────────────────────────────────────────────────────
+// Reads the access token from Redux first; falls back to localStorage so the
+// token survives page refreshes (redux-persist handles rehydration, but this
+// is a safety net for the very first request before rehydration completes).
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = selectAccessToken(store.getState());
+    let token = selectAccessToken(store.getState());
+
+    if (!token && typeof window !== 'undefined') {
+      token = localStorage.getItem('accessToken');
+      if (token) {
+        store.dispatch(setAccessToken(token));
+      }
+    }
 
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -104,58 +142,91 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+// ─── Response Interceptor ─────────────────────────────────────────────────────
+// Whenever any API response contains tokens (e.g. login, verify-token),
+// persist them to Redux + localStorage.
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const accessToken = response.data?.accessToken;
+    // NOTE: only treat refreshToken field as the refresh token — do NOT fall
+    // back to response.data?.token, which is ambiguous and caused a bug where
+    // the access token was being stored as a refresh token.
+    const refreshToken = response.data?.refreshToken;
+
+    if (accessToken) {
+      store.dispatch(setAccessToken(accessToken));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('accessToken', accessToken);
+      }
+    }
+
+    if (refreshToken) {
+      store.dispatch(setRefreshToken(refreshToken));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('refreshToken', refreshToken);
+      }
+    }
+
+    return response;
+  },
   async (error: AxiosError<{ message?: string }>) => {
     const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
     const status = error.response?.status;
 
-    // if (
-    //   status === 401 &&
-    //   originalRequest &&
-    //   !originalRequest._retry &&
-    //   !originalRequest.skipAuthRefresh
-    // ) {
-    //   if (isRefreshing) {
-    //     return new Promise((resolve, reject) => {
-    //       subscribeTokenRefresh((nextToken) => {
-    //         if (!nextToken) {
-    //           reject(error);
-    //           return;
-    //         }
+    if (
+      status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !originalRequest.skipAuthRefresh
+    ) {
+      if (isRefreshing) {
+        // Queue the request until the in-flight refresh finishes
+        return new Promise((resolve, reject) => {
+          subscribeTokenRefresh((nextAccessToken) => {
+            if (!nextAccessToken) {
+              reject(error);
+              return;
+            }
 
-    //         originalRequest._retry = true;
-    //         originalRequest.headers = originalRequest.headers ?? {};
-    //         originalRequest.headers.Authorization = `Bearer ${nextToken}`;
-    //         resolve(axiosInstance(originalRequest));
-    //       });
-    //     });
-    //   }
+            originalRequest._retry = true;
+            originalRequest.headers = originalRequest.headers ?? {};
+            originalRequest.headers.Authorization = `Bearer ${nextAccessToken}`;
+            resolve(axiosInstance(originalRequest));
+          });
+        });
+      }
 
-    //   originalRequest._retry = true;
-    //   isRefreshing = true;
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-    //   try {
-    //     const nextToken = await refreshAccessToken();
-    //     onRefreshComplete(nextToken);
+      try {
+        // refreshAccessToken() now returns the NEW ACCESS TOKEN
+        const nextAccessToken = await refreshAccessToken();
+        onRefreshComplete(nextAccessToken);
 
-    //     if (!nextToken) {
-    //       redirectToAuthError();
-    //       return Promise.reject(error);
-    //     }
+        if (!nextAccessToken) {
+          redirectToAuthError();
+          return Promise.reject(error);
+        }
 
-    //     originalRequest.headers = originalRequest.headers ?? {};
-    //     originalRequest.headers.Authorization = `Bearer ${nextToken}`;
-    //     return axiosInstance(originalRequest);
-    //   } catch (refreshError) {
-    //     onRefreshComplete(null);
-    //     store.dispatch(clearAccessToken());
-    //     redirectToAuthError();
-    //     return Promise.reject(refreshError);
-    //   } finally {
-    //     isRefreshing = false;
-    //   }
-    // }
+        // Retry the original request with the new ACCESS token
+        originalRequest.headers = originalRequest.headers ?? {};
+        originalRequest.headers.Authorization = `Bearer ${nextAccessToken}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        onRefreshComplete(null);
+        store.dispatch(clearAccessToken());
+        store.dispatch(clearRefreshToken());
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+        }
+        redirectToAuthError();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
 
     if (!error.response) {
       toast.error('Network error. Please check your internet connection.');

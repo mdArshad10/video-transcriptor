@@ -22,38 +22,19 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
-  ) {}
-
-  private setRefreshCookie(
-    response: Response,
-    refreshToken: string,
-    expiresAt: Date,
-  ): void {
-    const secureCookie =
-      this.configService.get<string>('NODE_ENV') === 'production';
-
-    response.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
-      httpOnly: true,
-      secure: secureCookie,
-      sameSite: 'strict',
-      expires: expiresAt,
-      path: '/',
-    });
-  }
+  ) { }
 
   @Post('verify-token')
   async verifyToken(@Body() dto: VerifyTokenDto, @Res({ passthrough: true }) res: Response) {
     const user = await this.authService.verifyAsymmetricToken(dto.token);
 
     const accessToken = await this.authService.issueAccessToken(user);
-    const { rawToken: refreshToken, expiresAt } =
+    const { rawToken } =
       await this.authService.createRefreshToken(user);
-
-    // this.setRefreshCookie(res, refreshToken, expiresAt);
 
     return {
       accessToken,
-      expiresIn: this.configService.get<string>('JWT_ACCESS_TTL') || ACCESS_TOKEN_TTL,
+      refreshToken: rawToken,
       user,
     };
   }
@@ -64,19 +45,19 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE_NAME];
+    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE_NAME] ?? req.headers?.authorization?.split(' ')[1];
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token missing');
     }
 
-    const { accessToken, refreshToken: nextRefreshToken, refreshExpiresAt, user } =
+    const { accessToken, refreshToken: nextRefreshToken, user } =
       await this.authService.rotateRefreshToken(refreshToken);
 
     // this.setRefreshCookie(res, nextRefreshToken, refreshExpiresAt);
 
     return {
       accessToken,
-      expiresIn: this.configService.get<string>('JWT_ACCESS_TTL') || ACCESS_TOKEN_TTL,
+      refreshToken: nextRefreshToken,
       user,
     };
   }

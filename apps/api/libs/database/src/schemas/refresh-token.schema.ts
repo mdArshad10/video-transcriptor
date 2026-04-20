@@ -8,8 +8,6 @@ export type RefreshTokenDocument = HydratedDocument<RefreshToken>;
   timestamps: { createdAt: 'created_at', updatedAt: false },
 })
 export class RefreshToken {
-  @Prop({ type: String, required: true, unique: true, index: true })
-  token_id: string;
 
   @Prop({ type: String, required: true, index: true })
   user_id: string;

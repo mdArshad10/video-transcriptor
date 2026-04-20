@@ -10,7 +10,7 @@ const JwtLandingPage = () => {
   const dispatch = useAppDispatch();
   const [verifyToken] = useVerifyTokenMutation();
   const isRef = useRef(false);
-  debugger;
+  
 
   useEffect(() => {
     if (isRef.current) return;
@@ -19,17 +19,17 @@ const JwtLandingPage = () => {
         navigate('/auth-error', { replace: true });
         return;
       }
-      debugger;
+
 
       isRef.current = true;
       try {
-        debugger;
+        
         const response = await verifyToken({ token }).unwrap();
-        debugger;
+        
         dispatch(setAccessToken(response?.accessToken ?? null));
         navigate('/', { replace: true });
       } catch {
-        debugger;
+        
         dispatch(clearAccessToken());
         navigate('/auth-error', { replace: true });
       }

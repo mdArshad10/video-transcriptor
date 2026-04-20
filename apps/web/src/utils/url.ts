@@ -1,7 +1,7 @@
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-export const AWS_S3_DESTINATION_BUCKET = import.meta.env.VITE_AWS_DESTINATION_BUCKET; 
-
+export const AWS_S3_DESTINATION_BUCKET = import.meta.env.VITE_AWS_DESTINATION_BUCKET;
+export const VITE_ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT ?? "dev";
 
 export const API = {
   COURSE: {
