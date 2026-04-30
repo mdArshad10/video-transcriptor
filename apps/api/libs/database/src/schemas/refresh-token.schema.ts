@@ -35,3 +35,5 @@ export class RefreshToken {
 
 export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);
 
+RefreshTokenSchema.index({ expires_at: 1 }, { expireAfterSeconds: 0 });
+
