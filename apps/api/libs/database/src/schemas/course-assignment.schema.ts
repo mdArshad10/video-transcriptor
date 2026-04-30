@@ -37,7 +37,7 @@ export const CourseAssignmentSchema =
   SchemaFactory.createForClass(CourseAssignment);
 
 // Compound unique index: one record per (course, target_type, target_id)
-CourseAssignmentSchema.index(
-  { course_id: 1, target_type: 1, target_id: 1 },
-  { unique: true },
-);
+// CourseAssignmentSchema.index(
+//   { course_id: 1, target_type: 1, target_id: 1 },
+//   { unique: true },
+// );

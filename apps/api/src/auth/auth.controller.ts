@@ -45,15 +45,18 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE_NAME] ?? req.headers?.authorization?.split(' ')[1];
+    // Priority: httpOnly cookie → body.refreshToken
+    // NOTE: Do NOT fall back to Authorization header — that carries the access token.
+    const refreshToken =
+      req.cookies?.[REFRESH_TOKEN_COOKIE_NAME] ??
+      (req.body as { refreshToken?: string })?.refreshToken;
+
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token missing');
     }
 
     const { accessToken, refreshToken: nextRefreshToken, user } =
       await this.authService.rotateRefreshToken(refreshToken);
-
-    // this.setRefreshCookie(res, nextRefreshToken, refreshExpiresAt);
 
     return {
       accessToken,

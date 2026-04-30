@@ -93,12 +93,12 @@ export class AuthService {
     // hashedToken is what we store in the DB — never store the raw secret
     const hashedToken = await bcrypt.hash(rawToken, 10);
 
+    const ttlDays =
+      parseInt(this.configService.get<string>('REFRESH_TOKEN_TTL_DAYS') ?? '', 10) ||
+      REFRESH_TOKEN_TTL_DAYS;
+
     const expiresAt = new Date();
-    expiresAt.setDate(
-      expiresAt.getDate() +
-      (this.configService.get<number>('REFRESH_TOKEN_TTL_DAYS') ||
-        REFRESH_TOKEN_TTL_DAYS),
-    );
+    expiresAt.setDate(expiresAt.getDate() + ttlDays);
 
     await this.refreshTokenModel.create({
       _id: tokenId,

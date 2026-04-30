@@ -5,6 +5,7 @@ import {
   clearAccessToken,
   clearRefreshToken,
   selectAccessToken,
+  selectRefreshToken,
   setAccessToken,
   setRefreshToken,
 } from '../auth/accessTokenStore';
@@ -45,16 +46,20 @@ const axiosInstance = axios.create({
 });
 
 let refreshPromise: Promise<string | null> | null = null;
-let isRefreshing = false;
-let refreshSubscribers: Array<(token: string | null) => void> = [];
 
-const subscribeTokenRefresh = (callback: (token: string | null) => void) => {
-  refreshSubscribers.push(callback);
-};
+const authEndpoints = ['/auth/refresh', '/auth/verify-token'];
 
-const onRefreshComplete = (token: string | null) => {
-  refreshSubscribers.forEach((callback) => callback(token));
-  refreshSubscribers = [];
+const isAuthEndpoint = (url?: string) => {
+  if (!url) {
+    return false;
+  }
+
+  try {
+    const parsedUrl = new URL(url, API_BASE_URL);
+    return authEndpoints.some((endpoint) => parsedUrl.pathname.endsWith(endpoint));
+  } catch {
+    return authEndpoints.some((endpoint) => url.includes(endpoint));
+  }
 };
 
 const redirectToAuthError = () => {
@@ -63,16 +68,76 @@ const redirectToAuthError = () => {
   }
 };
 
+const clearStoredAuth = () => {
+  store.dispatch(clearAccessToken());
+  store.dispatch(clearRefreshToken());
+
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  }
+};
+
+const persistTokens = (accessToken?: string | null, refreshToken?: string | null) => {
+  store.dispatch(setAccessToken(accessToken ?? null));
+
+  if (refreshToken !== undefined) {
+    store.dispatch(setRefreshToken(refreshToken));
+  }
+
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  if (accessToken) {
+    localStorage.setItem('accessToken', accessToken);
+  } else {
+    localStorage.removeItem('accessToken');
+  }
+
+  if (refreshToken !== undefined) {
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
+    } else {
+      localStorage.removeItem('refreshToken');
+    }
+  }
+};
+
+const getStoredRefreshToken = () => {
+  const stateRefreshToken = selectRefreshToken(store.getState());
+
+  if (stateRefreshToken) {
+    return stateRefreshToken;
+  }
+
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('refreshToken');
+  }
+
+  return null;
+};
+
 // Returns the NEW ACCESS TOKEN (not the refresh token) so callers can
 // attach it to the Authorization header when retrying failed requests.
 const refreshAccessToken = async (): Promise<string | null> => {
   if (!refreshPromise) {
+    const storedRefreshToken = getStoredRefreshToken();
+
+    if (!storedRefreshToken) {
+      clearStoredAuth();
+      return null;
+    }
+
     refreshPromise = axios
       .post(
         `${API_BASE_URL}/auth/refresh`,
-        {},
+        // Send refreshToken in body so the backend receives it correctly.
+        // Do NOT use Authorization header — that slot is reserved for the access token.
+        { refreshToken: storedRefreshToken },
         {
           withCredentials: true,
+          skipAuthRefresh: true, // Prevent the interceptor from retrying this call
           headers: {
             'Content-Type': 'application/json',
           },
@@ -80,34 +145,15 @@ const refreshAccessToken = async (): Promise<string | null> => {
       )
       .then((response) => {
         const nextAccessToken = response.data?.accessToken ?? null;
-        const nextRefreshToken = response.data?.refreshToken ?? null;
+        const nextRefreshToken = response.data?.refreshToken ?? storedRefreshToken;
 
-        store.dispatch(setAccessToken(nextAccessToken));
-        store.dispatch(setRefreshToken(nextRefreshToken));
-
-        if (typeof window !== 'undefined') {
-          if (nextAccessToken) {
-            localStorage.setItem('accessToken', nextAccessToken);
-          } else {
-            localStorage.removeItem('accessToken');
-          }
-          if (nextRefreshToken) {
-            localStorage.setItem('refreshToken', nextRefreshToken);
-          } else {
-            localStorage.removeItem('refreshToken');
-          }
-        }
+        persistTokens(nextAccessToken, nextRefreshToken);
 
         // Return the ACCESS TOKEN — callers use this for Bearer auth
         return nextAccessToken;
       })
       .catch(() => {
-        store.dispatch(clearAccessToken());
-        store.dispatch(clearRefreshToken());
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-        }
+        clearStoredAuth();
         return null;
       })
       .finally(() => {
@@ -124,6 +170,10 @@ const refreshAccessToken = async (): Promise<string | null> => {
 // is a safety net for the very first request before rehydration completes).
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    if (config.skipAuthRefresh || isAuthEndpoint(config.url)) {
+      return config;
+    }
+
     let token = selectAccessToken(store.getState());
 
     if (!token && typeof window !== 'undefined') {
@@ -153,18 +203,8 @@ axiosInstance.interceptors.response.use(
     // the access token was being stored as a refresh token.
     const refreshToken = response.data?.refreshToken;
 
-    if (accessToken) {
-      store.dispatch(setAccessToken(accessToken));
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', accessToken);
-      }
-    }
-
-    if (refreshToken) {
-      store.dispatch(setRefreshToken(refreshToken));
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('refreshToken', refreshToken);
-      }
+    if (accessToken || refreshToken) {
+      persistTokens(accessToken ?? selectAccessToken(store.getState()), refreshToken);
     }
 
     return response;
@@ -177,32 +217,14 @@ axiosInstance.interceptors.response.use(
       status === 401 &&
       originalRequest &&
       !originalRequest._retry &&
-      !originalRequest.skipAuthRefresh
+      !originalRequest.skipAuthRefresh &&
+      !isAuthEndpoint(originalRequest.url)
     ) {
-      if (isRefreshing) {
-        // Queue the request until the in-flight refresh finishes
-        return new Promise((resolve, reject) => {
-          subscribeTokenRefresh((nextAccessToken) => {
-            if (!nextAccessToken) {
-              reject(error);
-              return;
-            }
-
-            originalRequest._retry = true;
-            originalRequest.headers = originalRequest.headers ?? {};
-            originalRequest.headers.Authorization = `Bearer ${nextAccessToken}`;
-            resolve(axiosInstance(originalRequest));
-          });
-        });
-      }
-
       originalRequest._retry = true;
-      isRefreshing = true;
 
       try {
         // refreshAccessToken() now returns the NEW ACCESS TOKEN
         const nextAccessToken = await refreshAccessToken();
-        onRefreshComplete(nextAccessToken);
 
         if (!nextAccessToken) {
           redirectToAuthError();
@@ -214,17 +236,9 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${nextAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        onRefreshComplete(null);
-        store.dispatch(clearAccessToken());
-        store.dispatch(clearRefreshToken());
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-        }
+        clearStoredAuth();
         redirectToAuthError();
         return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
 
@@ -245,7 +259,7 @@ axiosInstance.interceptors.response.use(
         toast.error(errMsg ?? 'Bad Request. Please check your input.', errorOptions);
         break;
       case 401:
-        if (!originalRequest?.skipAuthRefresh) {
+        if (!originalRequest?.skipAuthRefresh && !isAuthEndpoint(originalRequest?.url)) {
           toast.error(errMsg ?? 'Unauthorized. Please login again.', errorOptions);
         }
         break;

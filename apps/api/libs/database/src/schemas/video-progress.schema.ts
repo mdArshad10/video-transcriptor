@@ -31,7 +31,7 @@ export class VideoProgress {
 export const VideoProgressSchema = SchemaFactory.createForClass(VideoProgress);
 
 // Unique: one progress record per (video, user) pair
-VideoProgressSchema.index({ video_id: 1, user_id: 1 }, { unique: true });
+// VideoProgressSchema.index({ video_id: 1, user_id: 1 }, { unique: true });
 
-// Compound index for fetching all progress in a course for a given user
-VideoProgressSchema.index({ course_id: 1, user_id: 1 });
+// // Compound index for fetching all progress in a course for a given user
+// VideoProgressSchema.index({ course_id: 1, user_id: 1 });

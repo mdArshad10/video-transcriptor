@@ -28,8 +28,8 @@ export class Video {
   @Prop({ type: String, required: true })
   raw_storage_key: string;
 
-  @Prop({ type: String, default:null })
-  hls_Master_Url:string
+  @Prop({ type: String, default: null })
+  hls_Master_Url: string
 
   @Prop({ type: Number, default: null })
   duration_seconds: number | null;
@@ -58,7 +58,7 @@ export class Video {
 export const VideoSchema = SchemaFactory.createForClass(Video);
 
 // Compound unique: a course cannot have two videos at the same position
-VideoSchema.index({ course_id: 1, video_order: 1 }, { unique: true });
+// VideoSchema.index({ course_id: 1, video_order: 1 }, { unique: true });
 
 // Soft-delete: exclude deleted documents from default queries
 VideoSchema.pre(/^find/, function (this: any) {

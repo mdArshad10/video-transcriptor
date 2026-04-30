@@ -1,15 +1,17 @@
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 import { AxiosError, type AxiosResponse } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import axiosInstance from './axiosInstance';
 
 export interface BaseQueryArgs {
     url: string;
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-    data?: any;
-    params?: any;
-    headers?: any;
-    responseType?: any;
-    signal?: AbortSignal
+    data?: unknown;
+    params?: AxiosRequestConfig['params'];
+    headers?: AxiosRequestConfig['headers'];
+    responseType?: AxiosRequestConfig['responseType'];
+    signal?: AbortSignal;
+    skipAuthRefresh?: boolean;
 }
 
 export interface BaseQueryResponse<T> {
@@ -32,22 +34,23 @@ export interface BaseQueryError {
 const axiosBaseQuery = (
     { baseUrl }: { baseUrl: string } = { baseUrl: '' }
 ): BaseQueryFn<BaseQueryArgs, unknown, BaseQueryError> =>
-    async ({ url, method, data, params, headers, responseType, signal }) => {
+    async ({ url, method, data, params, headers, responseType, signal, skipAuthRefresh }) => {
         try {
-            const result: AxiosResponse<BaseQueryResponse<any>> = await axiosInstance({
+            const result: AxiosResponse<BaseQueryResponse<unknown>> = await axiosInstance({
                 url: baseUrl + url,
                 method,
                 data,
                 params,
                 headers,
                 responseType,
-                signal
+                signal,
+                skipAuthRefresh,
             });
 
             // Return in RTK Query expected format: { data: ... }
             return { data: result.data };
         } catch (axiosError) {
-            const err = axiosError as AxiosError<BaseQueryResponse<any>>;
+            const err = axiosError as AxiosError<BaseQueryResponse<unknown>>;
 
             // Return error in RTK Query expected format: { error: ... }
             return {
