@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, RefreshCcw } from 'lucide-react';
+import { BookOpen, Plus, RefreshCcw } from 'lucide-react';
 
 import { Button } from '@workspace/ui/components/button';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -8,6 +8,7 @@ import {
   CourseCard,
   type CourseProgressState,
 } from '@/components/CourseCard';
+import { CourseFormPanel } from '@/components/CourseFormPanel';
 import { useGetMyCoursesQuery, type Course } from '@/store/api/courseApi';
 import {
   useGetMyProgressQuery,
@@ -128,6 +129,7 @@ function CourseListSkeleton() {
 
 const CoursesPage = () => {
   const [activeTab, setActiveTab] = useState<ProgressTab>('all');
+  const [formOpen, setFormOpen] = useState(false);
   const {
     data: coursesResponse,
     isLoading: isCoursesLoading,
@@ -197,16 +199,29 @@ const CoursesPage = () => {
               </p>
             </div>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleRetry}
-            disabled={isCoursesFetching}
-          >
-            <RefreshCcw className="size-4" aria-hidden="true" />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              id="add-course-btn"
+              type="button"
+              size="sm"
+              onClick={() => setFormOpen((prev) => !prev)}
+              aria-expanded={formOpen}
+              aria-controls="course-create-form"
+            >
+              <Plus className="size-4" aria-hidden="true" />
+              Add course
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleRetry}
+              disabled={isCoursesFetching}
+            >
+              <RefreshCcw className="size-4" aria-hidden="true" />
+              Refresh
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -217,6 +232,10 @@ const CoursesPage = () => {
           transition={{ duration: 0.2 }}
           className="space-y-8"
         >
+          <CourseFormPanel
+            open={formOpen}
+            onClose={() => setFormOpen(false)}
+          />
           <section className="max-w-3xl">
             <p className="text-sm font-medium text-muted-foreground">
               Your learning

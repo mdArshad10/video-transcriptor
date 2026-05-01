@@ -21,6 +21,12 @@ export class VideoProgress {
   @Prop({ type: Number, default: 0 })
   last_position_seconds: number;
 
+  @Prop({ type: Number, default: 0 })
+  total_watched_seconds: number; // deduplicated, not just sum of jumps
+
+  @Prop({ type: [[Number]], default: [] })
+  watched_ranges: [number, number][]; // e.g., [[0, 30], [120, 150]]
+
   @Prop({ type: Boolean, default: false })
   completed: boolean;
 
@@ -34,4 +40,9 @@ export const VideoProgressSchema = SchemaFactory.createForClass(VideoProgress);
 // VideoProgressSchema.index({ video_id: 1, user_id: 1 }, { unique: true });
 
 // // Compound index for fetching all progress in a course for a given user
-// VideoProgressSchema.index({ course_id: 1, user_id: 1 });
+
+// VideoProgressSchema
+VideoProgressSchema.index({ video_id: 1, user_id: 1 }, { unique: true });
+VideoProgressSchema.index({ course_id: 1, user_id: 1 });
+VideoProgressSchema.index({ user_id: 1, completed: 1 });  // "my completed courses"
+

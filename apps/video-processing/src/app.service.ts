@@ -25,15 +25,15 @@ export class AppService implements OnModuleInit {
   private readonly queueUrl: string;
   private readonly processingDir: string;
 
-  constructor(
-    private readonly configService: ConfigService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     this.sqsClient = new SQSClient({
       region: this.configService.getOrThrow<string>('AWS_REGION'),
       endpoint: this.configService.getOrThrow<string>('AWS_ENDPOINT_URL'),
       credentials: {
         accessKeyId: this.configService.getOrThrow<string>('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.getOrThrow<string>('AWS_SECRET_ACCESS_KEY'),
+        secretAccessKey: this.configService.getOrThrow<string>(
+          'AWS_SECRET_ACCESS_KEY',
+        ),
       },
     });
     this.s3Client = new S3Client({
@@ -41,7 +41,9 @@ export class AppService implements OnModuleInit {
       endpoint: this.configService.getOrThrow<string>('AWS_ENDPOINT_URL'),
       credentials: {
         accessKeyId: this.configService.getOrThrow<string>('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.getOrThrow<string>('AWS_SECRET_ACCESS_KEY'),
+        secretAccessKey: this.configService.getOrThrow<string>(
+          'AWS_SECRET_ACCESS_KEY',
+        ),
       },
     });
 
@@ -62,7 +64,6 @@ export class AppService implements OnModuleInit {
           MaxNumberOfMessages: 1,
           WaitTimeSeconds: 20,
         });
-
 
         const response = await this.sqsClient.send(command);
 
@@ -89,15 +90,12 @@ export class AppService implements OnModuleInit {
             }),
           );
         }
-
       } catch (error) {
         console.error('Error polling SQS:', error);
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 5000));
       }
     }
   }
-
-
 
   createMasterPlaylist(outputDir: string) {
     const master = `#EXTM3U
@@ -125,7 +123,7 @@ export class AppService implements OnModuleInit {
   }
 
   private async processVideo(bucket: string, key: string) {
-    const parts = key?.split('/')
+    const parts = key?.split('/');
     const videoId = parts[4]; // adjust if needed
     const courseId = parts[2];
     const inputPath = path.join(this.processingDir, `${videoId}-input.mp4`);
@@ -136,25 +134,42 @@ export class AppService implements OnModuleInit {
 
     try {
       // 1. Download file from S3 and save locally
-      console.log("Step 1: Downloading from S3...");
+      console.log('Step 1: Downloading from S3...');
       await this.downloadFromS3(bucket, key, inputPath);
 
+      const durationSeconds = await this.extractDuration(inputPath);
+
       // 2. Run FFmpeg
-      console.log("Step 2: Running FFmpeg...");
+      console.log('Step 2: Running FFmpeg...');
       await this.runFFmpeg(inputPath, outputDir);
 
-      // 🔥 ADD HERE (RIGHT AFTER FFMPEG)
-      console.log("Step 3: Creating master playlist...");
-      this.createMasterPlaylist(outputDir);
 
+      // 🔥 ADD HERE (RIGHT AFTER FFMPEG)
+      console.log('Step 3: Creating master playlist...');
+      this.createMasterPlaylist(outputDir);
 
       const s3Prefix = `processed/courses/${courseId}/videos/${videoId}`;
 
+      console.log('📦 Step 3.5: Uploading metadata...');
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: s3_destination_bucket,
+          Key: `${s3Prefix}/metadata.json`,
+          Body: JSON.stringify({
+            video_id: videoId,
+            course_id: courseId,
+            duration_seconds: durationSeconds,
+            processed_at: new Date().toISOString(),
+          }),
+          ContentType: 'application/json',
+        }),
+      );
       // 3. Upload HLS to S3
-      console.log("Step 4: Uploading HLS to S3...");
+      console.log('Step 4: Uploading HLS to S3...');
       await this.uploadFolderToS3(s3_destination_bucket, outputDir, s3Prefix);
 
-      console.log("Step 5: Cleanup");
+
+      console.log('Step 5: Cleanup');
     } catch (error) {
       console.error('Error processing message:', error);
     } finally {
@@ -180,7 +195,7 @@ export class AppService implements OnModuleInit {
       new GetObjectCommand({
         Bucket: bucket,
         Key: key,
-      })
+      }),
     );
 
     return new Promise<void>((resolve, reject) => {
@@ -188,8 +203,8 @@ export class AppService implements OnModuleInit {
       const writeStream = createWriteStream(outputPath);
       const body = res.Body as any;
       body.pipe(writeStream);
-      body.on("error", reject);
-      writeStream.on("finish", () => resolve());
+      body.on('error', reject);
+      writeStream.on('finish', () => resolve());
     });
   }
 
@@ -202,47 +217,63 @@ export class AppService implements OnModuleInit {
       fs.mkdirSync(outputDir, { recursive: true });
 
       const args = [
-        "-i", input,
-        "-filter_complex",
-        "[0:v]split=2[v1][v2];[v1]scale=1280:720[v1out];[v2]scale=854:480[v2out]",
+        '-hide_banner',
+        '-loglevel', 'error',
+        '-stats',
+        '-y',
+        '-i', input,
 
-        // 720p
-        "-map", "[v1out]",
-        "-map", "0:a?",
-        "-c:v:0", "libx264",
-        "-b:v:0", "3000k",
-        "-hls_time", "6",
-        "-hls_playlist_type", "vod",
-        "-hls_segment_filename", `${outputDir}/720p_%03d.ts`,
+        // Video filter: split to multiple resolutions
+        '-filter_complex',
+        '[0:v]split=2[v1][v2];[v1]scale=1280:720[v1out];[v2]scale=854:480[v2out]',
+
+        // 720p output
+        '-map', '[v1out]',
+        '-map', '0:a?',
+        '-c:v:0', 'libx264',
+        '-b:v:0', '3000k',
+        '-maxrate:v:0', '3000k',
+        '-bufsize:v:0', '6000k',
+        '-c:a:0', 'aac',
+        '-b:a:0', '128k',
+        '-hls_time', '6',
+        '-hls_playlist_type', 'vod',
+        '-hls_segment_filename', `${outputDir}/720p_%03d.ts`,
+        '-f', 'hls',
         `${outputDir}/720p.m3u8`,
 
-        // 480p
-        "-map", "[v2out]",
-        "-map", "0:a?",
-        "-c:v:1", "libx264",
-        "-b:v:1", "1500k",
-        "-hls_time", "6",
-        "-hls_playlist_type", "vod",
-        "-hls_segment_filename", `${outputDir}/480p_%03d.ts`,
+        // 480p output
+        '-map', '[v2out]',
+        '-map', '0:a?',
+        '-c:v:1', 'libx264',
+        '-b:v:1', '1500k',
+        '-maxrate:v:1', '1500k',
+        '-bufsize:v:1', '3000k',
+        '-c:a:1', 'aac',
+        '-b:a:1', '96k',
+        '-hls_time', '6',
+        '-hls_playlist_type', 'vod',
+        '-hls_segment_filename', `${outputDir}/480p_%03d.ts`,
+        '-f', 'hls',
         `${outputDir}/480p.m3u8`,
       ];
 
-      const ffmpeg = spawn("ffmpeg", args);
+      const ffmpeg = spawn('ffmpeg', args);
 
-      ffmpeg.stderr.on("data", (data) => {
-        console.log("FFmpeg:", data.toString());
+      ffmpeg.stderr.on('data', (data) => {
+        console.log('FFmpeg:', data.toString());
       });
 
-      ffmpeg.on("close", (code) => {
+      ffmpeg.on('close', (code) => {
         if (code === 0) {
-          console.log("✅ FFmpeg finished");
+          console.log('✅ FFmpeg finished');
           resolve();
         } else {
           reject(new Error(`FFmpeg exited with code ${code}`));
         }
       });
 
-      ffmpeg.on("error", (err) => {
+      ffmpeg.on('error', (err) => {
         reject(err);
       });
     });
@@ -251,23 +282,17 @@ export class AppService implements OnModuleInit {
   // ------------------------
   // Upload Folder
   // ------------------------
-  async uploadFolderToS3(
-    bucket: string,
-    folderPath: string,
-    s3Prefix: string
-  ) {
+  async uploadFolderToS3(bucket: string, folderPath: string, s3Prefix: string) {
     const files = readdirSync(folderPath).filter((file) =>
       fs.statSync(path.join(folderPath, file)).isFile(),
     );
 
     // make the upload the in order
-    const segmentFiles = files
-      .filter((file) => file.endsWith(".ts"))
-      .sort();
+    const segmentFiles = files.filter((file) => file.endsWith('.ts')).sort();
     const variantPlaylists = files
-      .filter((file) => file.endsWith(".m3u8") && file !== "master.m3u8")
+      .filter((file) => file.endsWith('.m3u8') && file !== 'master.m3u8')
       .sort();
-    const masterPlaylist = files.filter((file) => file === "master.m3u8");
+    const masterPlaylist = files.filter((file) => file === 'master.m3u8');
     const uploadOrder = [
       ...segmentFiles,
       ...variantPlaylists,
@@ -283,10 +308,34 @@ export class AppService implements OnModuleInit {
           Bucket: bucket,
           Key: `${s3Prefix}/${file}`,
           Body: fileContent,
-        })
+        }),
       );
 
-      console.log("Uploaded:", file);
+      console.log('Uploaded:', file);
     }
+  }
+
+  private async extractDuration(inputPath: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const ffprobe = spawn('ffprobe', [
+        '-v',
+        'error',
+        '-show_entries',
+        'format=duration',
+        '-of',
+        'default=noprint_wrappers=1:nokey=1',
+        inputPath,
+      ]);
+
+      let output = '';
+      ffprobe.stdout.on('data', (data) => (output += data.toString()));
+      ffprobe.on('close', (code) => {
+        if (code === 0) {
+          resolve(parseFloat(output.trim()));
+        } else {
+          reject(new Error('ffprobe failed'));
+        }
+      });
+    });
   }
 }

@@ -7,36 +7,57 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
-import { Video, VideoDocument } from '@app/database';
+import { Course, CourseDocument, Video, VideoDocument } from '@app/database';
 import { StorageService } from './lms/storage/storage.service';
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class AppService implements OnModuleInit {
   private readonly logger = new Logger(AppService.name);
   private readonly sqsClient: SQSClient;
+  private readonly s3Client: S3Client;
   private readonly queueUrl: string;
   private readonly hlsBaseUrl: string;
+  private readonly destinationBucket: string;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly storageService: StorageService,
     @InjectModel(Video.name)
     private readonly videoModel: Model<VideoDocument>,
+    @InjectModel(Course.name)
+    private readonly courseModel: Model<CourseDocument>,
   ) {
+    const region = this.configService.getOrThrow<string>('AWS_DEFAULT_REGION');
+    const endpoint = this.configService.getOrThrow<string>('AWS_ENDPOINT_URL');
+    const accessKeyId =
+      this.configService.getOrThrow<string>('AWS_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.getOrThrow<string>(
+      'AWS_SECRET_ACCESS_KEY',
+    );
+
     this.sqsClient = new SQSClient({
-      region: this.configService.getOrThrow<string>('AWS_DEFAULT_REGION'),
-      endpoint: this.configService.getOrThrow<string>('AWS_ENDPOINT_URL'),
-      credentials: {
-        accessKeyId: this.configService.getOrThrow<string>('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.getOrThrow<string>('AWS_SECRET_ACCESS_KEY'),
-      },
+      region,
+      endpoint,
+      credentials: { accessKeyId, secretAccessKey },
+    });
+
+    this.s3Client = new S3Client({
+      region,
+      endpoint,
+      credentials: { accessKeyId, secretAccessKey },
     });
 
     this.queueUrl = this.configService.getOrThrow<string>(
       'AWS_SQS_VIDEO_PROCESSING_COMPLETED_QUEUE_URL',
     );
+    this.destinationBucket = this.configService.getOrThrow<string>(
+      'AWS_S3_DESTINATION_BUCKET',
+    );
     this.hlsBaseUrl =
-      this.configService.get<string>('AWS_VIDEO_BASE_URL')?.replace(/\/+$/, '') ?? '';
+      this.configService
+        .get<string>('AWS_VIDEO_BASE_URL')
+        ?.replace(/\/+$/, '') ?? '';
   }
 
   onModuleInit() {
@@ -76,7 +97,8 @@ export class AppService implements OnModuleInit {
             continue;
           }
 
-          await this.processProcessedVideoKey(decodeURIComponent(key.replace(/\+/g, ' ')));
+          const decodedKey = decodeURIComponent(key.replace(/\+/g, ' '));
+          await this.processProcessedVideoKey(decodedKey);
 
           if (message.ReceiptHandle) {
             await this.sqsClient.send(
@@ -130,17 +152,60 @@ export class AppService implements OnModuleInit {
       return;
     }
 
+    // Fetch metadata.json for duration
+    let durationSeconds: number = 0;
+    try {
+      const metadata = await this.getMetadataFromS3(
+        key.replace('master.m3u8', 'metadata.json'),
+      );
+      this.logger.log(metadata);
+      if (typeof metadata?.duration_seconds === 'number') {
+        durationSeconds = metadata?.duration_seconds;
+      }
+    } catch (error) {
+      this.logger.warn(
+        `No metadata.json found for ${key}, duration will be 0`,
+      );
+    }
+
     await this.videoModel.updateOne(
       { _id: video._id, status: { $ne: 'READY' } },
       {
         $set: {
           hls_Master_Url: key,
           status: 'READY',
+          duration_seconds: durationSeconds,
         },
       },
     );
 
+    await this.courseModel.findByIdAndUpdate(
+      courseId,
+      {
+        $inc: {
+          total_duration_seconds: durationSeconds,
+          video_count: 1,
+        },
+      },
+      { new: true },
+    );
+
     this.logger.log(`Marked video ${video._id} as READY`);
+  }
+
+  private async getMetadataFromS3(key: string): Promise<any> {
+    const res = await this.s3Client.send(
+      new GetObjectCommand({
+        Bucket: this.destinationBucket,
+        Key: key,
+      }),
+    );
+    const body = await res.Body?.transformToString();
+    this.logger.log(body);
+    if (!body) {
+      throw new Error('Empty metadata file');
+    }
+    return JSON.parse(body);
   }
 
   private async buildPlaybackUrl(key: string) {

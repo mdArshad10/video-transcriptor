@@ -40,15 +40,16 @@ export interface FileProgress {
   isComplete: boolean;
 }
 
-function formatLessonDuration(seconds: number | null) {
-  if (!seconds || seconds <= 0) {
-    return 'Duration unavailable';
-  }
+export function formatDuration(seconds: number | null): string {
+  if (!seconds || seconds <= 0) return '0:00';
 
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
 
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  const mm = m.toString();
+  const ss = s.toString().padStart(2, '0');
+
+  return `${mm}:${ss}`;
 }
 
 function getVideoStatus(video: Video) {
@@ -262,9 +263,13 @@ const CourseDetailPage = () => {
     try {
       if (file) {
         setFileProgress({
-          [file.name]: { progress: 0, isComplete: false },
+          [file.name]: { progress: 0, isComplete: false }
         });
       }
+      console.log(file)
+      console.log(data)
+      debugger;
+
 
       if (editingVideo) {
         await updateVideo({
@@ -291,6 +296,10 @@ const CourseDetailPage = () => {
             thumbnailUrl: undefined,
             videoOrder: totalLessons + 1,
             isPublished: data.is_published || false,
+            originalFilename: file?.name,
+            fileSize: file?.size,
+            fileOriginalType: file?.type,
+
           },
         }).unwrap();
 
@@ -538,7 +547,7 @@ const CourseDetailPage = () => {
                           <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                             <span className="inline-flex items-center gap-1">
                               <Clock3 className="size-3" aria-hidden="true" />
-                              {formatLessonDuration(video.duration_seconds)}
+                              {formatDuration(video.duration_seconds)}
                             </span>
                             <span>{status.description}</span>
                             {watchedPercent > 0 && !isCompleted ? (

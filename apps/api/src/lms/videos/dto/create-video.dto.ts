@@ -37,4 +37,16 @@ export class CreateVideoDto {
   @IsBoolean()
   @IsOptional()
   isPublished?: boolean = false;
+
+  @IsInt()
+  @IsOptional()
+  fileSize?: number;
+
+  @IsString()
+  @IsOptional()
+  originalFilename?: string;
+
+  @IsString()
+  @IsOptional()
+  fileOriginalType?: string;
 }

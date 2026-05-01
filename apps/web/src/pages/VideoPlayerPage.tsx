@@ -9,7 +9,6 @@ import {
   RefreshCcw,
 } from 'lucide-react';
 
-import { formatDuration } from '@/utils/mock-data';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -27,13 +26,18 @@ import {
 } from '@/store/api/videoApi';
 import { MyPlayer } from '@/components/MyPlayer';
 
-function formatLessonDuration(seconds: number | null) {
-  if (!seconds || seconds <= 0) {
-    return 'Duration unavailable';
-  }
+export function formatLessonDuration(seconds: number | null): string {
+  if (!seconds || seconds <= 0) return '0:00';
 
-  return formatDuration(seconds);
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+
+  const mm = m.toString();
+  const ss = s.toString().padStart(2, '0');
+
+  return `${mm}:${ss}`;
 }
+
 
 function getPlaybackUnavailableCopy(status: Video['status']) {
   if (status === 'FAILED') {
@@ -365,7 +369,7 @@ const VideoPlayerPage = () => {
                 </span>
                 <span>{video.status.toLowerCase()}</span>
                 {progress?.last_position_seconds ? (
-                  <span>Last watched {formatDuration(progress.last_position_seconds)}</span>
+                  <span>Last watched {formatLessonDuration(progress.last_position_seconds)}</span>
                 ) : null}
               </div>
             </div>
@@ -391,18 +395,16 @@ const VideoPlayerPage = () => {
                   type="button"
                   onClick={() => navigate(`/courses/${courseId}/videos/${v._id}`)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex min-h-16 w-full items-center gap-3 border-b border-border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${
-                    isActive
-                      ? 'bg-secondary text-secondary-foreground'
-                      : 'bg-transparent hover:bg-muted/70'
-                  }`}
+                  className={`flex min-h-16 w-full items-center gap-3 border-b border-border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${isActive
+                    ? 'bg-secondary text-secondary-foreground'
+                    : 'bg-transparent hover:bg-muted/70'
+                    }`}
                 >
                   <div
-                    className={`flex size-9 shrink-0 items-center justify-center rounded-lg border text-xs font-medium ${
-                      isActive
-                        ? 'border-primary bg-background text-foreground'
-                        : 'border-border bg-secondary text-muted-foreground'
-                    }`}
+                    className={`flex size-9 shrink-0 items-center justify-center rounded-lg border text-xs font-medium ${isActive
+                      ? 'border-primary bg-background text-foreground'
+                      : 'border-border bg-secondary text-muted-foreground'
+                      }`}
                   >
                     {vProg?.completed ? (
                       <CheckCircle2 className="size-4" aria-hidden="true" />
@@ -412,9 +414,8 @@ const VideoPlayerPage = () => {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p
-                      className={`truncate text-sm ${
-                        isActive ? 'font-semibold text-foreground' : 'font-medium text-foreground'
-                      }`}
+                      className={`truncate text-sm ${isActive ? 'font-semibold text-foreground' : 'font-medium text-foreground'
+                        }`}
                     >
                       {v.title}
                     </p>

@@ -42,12 +42,11 @@ export class VideosService {
         title: dto.title,
         description: dto.description ?? null,
         raw_storage_key: rawStorageKey,
-        duration_seconds: dto.durationSeconds ?? null,
-        thumbnail_url: dto.thumbnailUrl ?? null,
         video_order: dto.videoOrder,
         is_published: dto.isPublished ?? false,
-        created_by: null,
-        updated_by: null,
+        file_size_bytes: dto.fileSize ?? null,
+        original_filename: dto.originalFilename ?? null,
+        file_original_type: dto.fileOriginalType ?? null,
       });
 
       const url =

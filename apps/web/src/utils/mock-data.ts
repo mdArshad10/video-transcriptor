@@ -130,8 +130,13 @@ export function getCourseProgress(courseId: string): { completed: number; total:
 }
 
 export function formatDuration(seconds: number | null): string {
-  if (!seconds) return '0:00';
+  if (!seconds || seconds <= 0) return '0:00';
+
   const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
+  const s = Math.floor(seconds % 60);
+
+  const mm = m.toString();
+  const ss = s.toString().padStart(2, '0');
+
+  return `${mm}:${ss}`;
 }

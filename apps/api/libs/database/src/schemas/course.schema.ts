@@ -28,6 +28,12 @@ export class Course {
   })
   status: CourseStatus;
 
+  @Prop({ type: Number, default: 0 })
+  total_duration_seconds: number;
+
+  @Prop({ type: Number, default: 0 })
+  video_count: number;
+
   @Prop({ type: String, default: null })
   thumbnail_url: string | null;
 
@@ -52,3 +58,7 @@ export const CourseSchema = SchemaFactory.createForClass(Course);
 CourseSchema.pre(/^find/, function (this: any) {
   this.where({ deleted_at: null });
 });
+
+// CourseSchema
+CourseSchema.index({ owner_id: 1, status: 1 });
+CourseSchema.index({ status: 1, created_at: -1 });        // public catalog

@@ -4,34 +4,37 @@ import { baseApi } from './baseApi';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Video {
-    _id: string;
-    course_id: string;
-    title: string;
-    description: string | null;
-    status: 'UPLOADING' | 'UPLOADED' | 'READY' | 'FAILED';
-    raw_storage_key: string;
-    hls_Master_Url: string | null;
-    duration_seconds: number | null;
-    thumbnail_url: string | null;
-    video_order: number;
-    is_published: boolean;
-    created_by: string | null;
-    updated_by: string | null;
-    deleted_at: string | null;
-    created_at: string;
-    updated_at: string;
+  _id: string;
+  course_id: string;
+  title: string;
+  description: string | null;
+  status: 'UPLOADING' | 'UPLOADED' | 'READY' | 'FAILED';
+  raw_storage_key: string;
+  hls_Master_Url: string | null;
+  duration_seconds: number | null;
+  thumbnail_url: string | null;
+  video_order: number;
+  is_published: boolean;
+  created_by: string | null;
+  updated_by: string | null;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // ─── Request shapes ───────────────────────────────────────────────────────────
 
 export interface CreateVideoRequest {
-    title: string;
-    storageKey: string;
-    videoOrder: number;
-    description?: string;
-    durationSeconds?: number;
-    thumbnailUrl?: string;
-    isPublished?: boolean;
+  title: string;
+  storageKey: string;
+  videoOrder: number;
+  description?: string;
+  durationSeconds?: number;
+  thumbnailUrl?: string;
+  isPublished?: boolean;
+  fileSize?: number;
+  originalFilename?: string;
+  fileOriginalType?: string;
 }
 
 export type UpdateVideoRequest = Partial<CreateVideoRequest> & { status?: 'UPLOADING' | 'UPLOADED' | 'READY' | 'FAILED' };
@@ -66,12 +69,12 @@ export const videoApi = baseApi.injectEndpoints({
       providesTags: (result, _error, courseId) =>
         result
           ? [
-              ...result.data.map(({ _id }) => ({
-                type: "Video" as const,
-                id: _id,
-              })),
-              { type: "Video", id: `COURSE_${courseId}` },
-            ]
+            ...result.data.map(({ _id }) => ({
+              type: "Video" as const,
+              id: _id,
+            })),
+            { type: "Video", id: `COURSE_${courseId}` },
+          ]
           : [{ type: "Video", id: `COURSE_${courseId}` }],
     }),
 
@@ -125,9 +128,9 @@ export const videoApi = baseApi.injectEndpoints({
 
 // Auto-generated hooks
 export const {
-    useCreateVideoMutation,
-    useGetCourseVideosQuery,
-    useGetCourseVideoByIdQuery,
-    useUpdateVideoMutation,
-    useDeleteVideoMutation,
+  useCreateVideoMutation,
+  useGetCourseVideosQuery,
+  useGetCourseVideoByIdQuery,
+  useUpdateVideoMutation,
+  useDeleteVideoMutation,
 } = videoApi;
