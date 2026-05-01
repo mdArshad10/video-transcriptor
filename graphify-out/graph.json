@@ -54,7 +54,7 @@
       "source_file": "packages/ui/src/hooks/use-toast.ts",
       "source_location": "L1",
       "id": "packages_ui_src_hooks_use_toast_ts",
-      "community": 5,
+      "community": 4,
       "norm_label": "use-toast.ts"
     },
     {
@@ -63,7 +63,7 @@
       "source_file": "packages/ui/src/hooks/use-toast.ts",
       "source_location": "L24",
       "id": "use_toast_genid",
-      "community": 5,
+      "community": 4,
       "norm_label": "genid()"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "packages/ui/src/hooks/use-toast.ts",
       "source_location": "L55",
       "id": "use_toast_addtoremovequeue",
-      "community": 5,
+      "community": 4,
       "norm_label": "addtoremovequeue()"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "packages/ui/src/hooks/use-toast.ts",
       "source_location": "L71",
       "id": "use_toast_reducer",
-      "community": 5,
+      "community": 4,
       "norm_label": "reducer()"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "packages/ui/src/hooks/use-toast.ts",
       "source_location": "L128",
       "id": "use_toast_dispatch",
-      "community": 5,
+      "community": 4,
       "norm_label": "dispatch()"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "packages/ui/src/hooks/use-toast.ts",
       "source_location": "L137",
       "id": "use_toast_toast",
-      "community": 5,
+      "community": 4,
       "norm_label": "toast()"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "packages/ui/src/hooks/use-toast.ts",
       "source_location": "L166",
       "id": "use_toast_usetoast",
-      "community": 5,
+      "community": 4,
       "norm_label": "usetoast()"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "packages/ui/src/components/sheet.tsx",
       "source_location": "L1",
       "id": "packages_ui_src_components_sheet_tsx",
-      "community": 11,
+      "community": 10,
       "norm_label": "sheet.tsx"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "packages/ui/src/components/sheet.tsx",
       "source_location": "L8",
       "id": "sheet_sheet",
-      "community": 11,
+      "community": 10,
       "norm_label": "sheet()"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "packages/ui/src/components/sheet.tsx",
       "source_location": "L12",
       "id": "sheet_sheettrigger",
-      "community": 11,
+      "community": 10,
       "norm_label": "sheettrigger()"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "packages/ui/src/components/sheet.tsx",
       "source_location": "L18",
       "id": "sheet_sheetclose",
-      "community": 11,
+      "community": 10,
       "norm_label": "sheetclose()"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "packages/ui/src/components/sheet.tsx",
       "source_location": "L24",
       "id": "sheet_sheetportal",
-      "community": 11,
+      "community": 10,
       "norm_label": "sheetportal()"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "packages/ui/src/components/sheet.tsx",
       "source_location": "L62",
       "id": "sheet_cn",
-      "community": 11,
+      "community": 10,
       "norm_label": "cn()"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "packages/ui/src/components/sheet.tsx",
       "source_location": "L120",
       "id": "sheet_sheetdescription",
-      "community": 11,
+      "community": 10,
       "norm_label": "sheetdescription()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "packages/ui/src/components/sidebar.tsx",
       "source_location": "L1",
       "id": "packages_ui_src_components_sidebar_tsx",
-      "community": 12,
+      "community": 11,
       "norm_label": "sidebar.tsx"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "packages/ui/src/components/sidebar.tsx",
       "source_location": "L44",
       "id": "sidebar_usesidebar",
-      "community": 12,
+      "community": 11,
       "norm_label": "usesidebar()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "packages/ui/src/components/sidebar.tsx",
       "source_location": "L95",
       "id": "sidebar_handlekeydown",
-      "community": 12,
+      "community": 11,
       "norm_label": "handlekeydown()"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "packages/ui/src/components/sidebar.tsx",
       "source_location": "L137",
       "id": "sidebar_cn",
-      "community": 12,
+      "community": 11,
       "norm_label": "cn()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "packages/ui/src/components/sidebar.tsx",
       "source_location": "L444",
       "id": "sidebar_sidebarmenu",
-      "community": 12,
+      "community": 11,
       "norm_label": "sidebarmenu()"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "packages/ui/src/components/sidebar.tsx",
       "source_location": "L455",
       "id": "sidebar_sidebarmenuitem",
-      "community": 12,
+      "community": 11,
       "norm_label": "sidebarmenuitem()"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "packages/ui/src/components/sidebar.tsx",
       "source_location": "L488",
       "id": "sidebar_sidebarmenubutton",
-      "community": 12,
+      "community": 11,
       "norm_label": "sidebarmenubutton()"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "packages/ui/src/components/combobox.tsx",
       "source_location": "L1",
       "id": "packages_ui_src_components_combobox_tsx",
-      "community": 13,
+      "community": 12,
       "norm_label": "combobox.tsx"
     },
     {
@@ -486,7 +486,7 @@
       "source_file": "packages/ui/src/components/combobox.tsx",
       "source_location": "L18",
       "id": "combobox_comboboxvalue",
-      "community": 13,
+      "community": 12,
       "norm_label": "comboboxvalue()"
     },
     {
@@ -495,7 +495,7 @@
       "source_file": "packages/ui/src/components/combobox.tsx",
       "source_location": "L22",
       "id": "combobox_comboboxtrigger",
-      "community": 13,
+      "community": 12,
       "norm_label": "comboboxtrigger()"
     },
     {
@@ -504,7 +504,7 @@
       "source_file": "packages/ui/src/components/combobox.tsx",
       "source_location": "L39",
       "id": "combobox_comboboxclear",
-      "community": 13,
+      "community": 12,
       "norm_label": "comboboxclear()"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "packages/ui/src/components/combobox.tsx",
       "source_location": "L115",
       "id": "combobox_cn",
-      "community": 13,
+      "community": 12,
       "norm_label": "cn()"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "packages/ui/src/components/combobox.tsx",
       "source_location": "L162",
       "id": "combobox_comboboxgroup",
-      "community": 13,
+      "community": 12,
       "norm_label": "comboboxgroup()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "packages/ui/src/components/combobox.tsx",
       "source_location": "L185",
       "id": "combobox_comboboxcollection",
-      "community": 13,
+      "community": 12,
       "norm_label": "comboboxcollection()"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L1",
       "id": "packages_ui_src_components_drawer_tsx",
-      "community": 7,
+      "community": 5,
       "norm_label": "drawer.tsx"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L6",
       "id": "drawer_drawer",
-      "community": 7,
+      "community": 5,
       "norm_label": "drawer()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L12",
       "id": "drawer_drawertrigger",
-      "community": 7,
+      "community": 5,
       "norm_label": "drawertrigger()"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L18",
       "id": "drawer_drawerportal",
-      "community": 7,
+      "community": 5,
       "norm_label": "drawerportal()"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L24",
       "id": "drawer_drawerclose",
-      "community": 7,
+      "community": 5,
       "norm_label": "drawerclose()"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L30",
       "id": "drawer_draweroverlay",
-      "community": 7,
+      "community": 5,
       "norm_label": "draweroverlay()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L73",
       "id": "drawer_cn",
-      "community": 7,
+      "community": 5,
       "norm_label": "cn()"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L92",
       "id": "drawer_drawertitle",
-      "community": 7,
+      "community": 5,
       "norm_label": "drawertitle()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "packages/ui/src/components/drawer.tsx",
       "source_location": "L105",
       "id": "drawer_drawerdescription",
-      "community": 7,
+      "community": 5,
       "norm_label": "drawerdescription()"
     },
     {
@@ -1143,7 +1143,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L1",
       "id": "packages_ui_src_components_menubar_tsx",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubar.tsx"
     },
     {
@@ -1152,7 +1152,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L9",
       "id": "menubar_menubar",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubar()"
     },
     {
@@ -1161,7 +1161,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L25",
       "id": "menubar_menubarmenu",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubarmenu()"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L31",
       "id": "menubar_menubargroup",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubargroup()"
     },
     {
@@ -1179,7 +1179,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L37",
       "id": "menubar_menubarportal",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubarportal()"
     },
     {
@@ -1188,7 +1188,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L102",
       "id": "menubar_cn",
-      "community": 8,
+      "community": 6,
       "norm_label": "cn()"
     },
     {
@@ -1197,7 +1197,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L142",
       "id": "menubar_menubarradioitem",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubarradioitem()"
     },
     {
@@ -1206,7 +1206,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L171",
       "id": "menubar_menubarlabel",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubarlabel()"
     },
     {
@@ -1215,7 +1215,7 @@
       "source_file": "packages/ui/src/components/menubar.tsx",
       "source_location": "L250",
       "id": "menubar_menubarsubcontent",
-      "community": 8,
+      "community": 6,
       "norm_label": "menubarsubcontent()"
     },
     {
@@ -1530,7 +1530,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L1",
       "id": "packages_ui_src_components_pagination_tsx",
-      "community": 9,
+      "community": 8,
       "norm_label": "pagination.tsx"
     },
     {
@@ -1539,7 +1539,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L7",
       "id": "pagination_pagination",
-      "community": 9,
+      "community": 8,
       "norm_label": "pagination()"
     },
     {
@@ -1548,7 +1548,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L19",
       "id": "pagination_paginationcontent",
-      "community": 9,
+      "community": 8,
       "norm_label": "paginationcontent()"
     },
     {
@@ -1557,7 +1557,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L32",
       "id": "pagination_paginationitem",
-      "community": 9,
+      "community": 8,
       "norm_label": "paginationitem()"
     },
     {
@@ -1566,7 +1566,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L41",
       "id": "pagination_paginationlink",
-      "community": 9,
+      "community": 8,
       "norm_label": "paginationlink()"
     },
     {
@@ -1575,7 +1575,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L64",
       "id": "pagination_paginationprevious",
-      "community": 9,
+      "community": 8,
       "norm_label": "paginationprevious()"
     },
     {
@@ -1584,7 +1584,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L82",
       "id": "pagination_paginationnext",
-      "community": 9,
+      "community": 8,
       "norm_label": "paginationnext()"
     },
     {
@@ -1593,7 +1593,7 @@
       "source_file": "packages/ui/src/components/pagination.tsx",
       "source_location": "L100",
       "id": "pagination_paginationellipsis",
-      "community": 9,
+      "community": 8,
       "norm_label": "paginationellipsis()"
     },
     {
@@ -1629,7 +1629,7 @@
       "source_file": "packages/ui/src/components/select.tsx",
       "source_location": "L1",
       "id": "packages_ui_src_components_select_tsx",
-      "community": 3,
+      "community": 1,
       "norm_label": "select.tsx"
     },
     {
@@ -1638,7 +1638,7 @@
       "source_file": "packages/ui/src/components/select.tsx",
       "source_location": "L9",
       "id": "select_select",
-      "community": 3,
+      "community": 1,
       "norm_label": "select()"
     },
     {
@@ -1647,7 +1647,7 @@
       "source_file": "packages/ui/src/components/select.tsx",
       "source_location": "L15",
       "id": "select_selectgroup",
-      "community": 3,
+      "community": 1,
       "norm_label": "selectgroup()"
     },
     {
@@ -1656,7 +1656,7 @@
       "source_file": "packages/ui/src/components/select.tsx",
       "source_location": "L28",
       "id": "select_selectvalue",
-      "community": 3,
+      "community": 1,
       "norm_label": "selectvalue()"
     },
     {
@@ -1665,7 +1665,7 @@
       "source_file": "packages/ui/src/components/select.tsx",
       "source_location": "L34",
       "id": "select_selecttrigger",
-      "community": 3,
+      "community": 1,
       "norm_label": "selecttrigger()"
     },
     {
@@ -1674,7 +1674,7 @@
       "source_file": "packages/ui/src/components/select.tsx",
       "source_location": "L60",
       "id": "select_selectcontent",
-      "community": 3,
+      "community": 1,
       "norm_label": "selectcontent()"
     },
     {
@@ -2025,7 +2025,7 @@
       "source_file": "apps/api/src/app.service.ts",
       "source_location": "L1",
       "id": "apps_api_src_app_service_ts",
-      "community": 4,
+      "community": 2,
       "norm_label": "app.service.ts"
     },
     {
@@ -2034,7 +2034,7 @@
       "source_file": "apps/video-processing/src/app.service.ts",
       "source_location": "L22",
       "id": "app_service_appservice",
-      "community": 4,
+      "community": 2,
       "norm_label": "appservice"
     },
     {
@@ -2043,52 +2043,61 @@
       "source_file": "apps/video-processing/src/app.service.ts",
       "source_location": "L28",
       "id": "app_service_appservice_constructor",
-      "community": 4,
+      "community": 2,
       "norm_label": ".constructor()"
     },
     {
       "label": ".onModuleInit()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L52",
+      "source_location": "L54",
       "id": "app_service_appservice_onmoduleinit",
-      "community": 4,
+      "community": 2,
       "norm_label": ".onmoduleinit()"
     },
     {
       "label": ".getHello()",
       "file_type": "code",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L47",
+      "source_location": "L68",
       "id": "app_service_appservice_gethello",
-      "community": 4,
+      "community": 2,
       "norm_label": ".gethello()"
     },
     {
       "label": ".pollQueue()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L57",
+      "source_location": "L59",
       "id": "app_service_appservice_pollqueue",
-      "community": 4,
+      "community": 2,
       "norm_label": ".pollqueue()"
     },
     {
       "label": ".processProcessedVideoKey()",
       "file_type": "code",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L97",
+      "source_location": "L119",
       "id": "app_service_appservice_processprocessedvideokey",
-      "community": 4,
+      "community": 2,
       "norm_label": ".processprocessedvideokey()"
+    },
+    {
+      "label": ".getMetadataFromS3()",
+      "file_type": "code",
+      "source_file": "apps/api/src/app.service.ts",
+      "source_location": "L196",
+      "id": "app_service_appservice_getmetadatafroms3",
+      "community": 2,
+      "norm_label": ".getmetadatafroms3()"
     },
     {
       "label": ".buildPlaybackUrl()",
       "file_type": "code",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L146",
+      "source_location": "L211",
       "id": "app_service_appservice_buildplaybackurl",
-      "community": 4,
+      "community": 2,
       "norm_label": ".buildplaybackurl()"
     },
     {
@@ -2268,7 +2277,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L1",
       "id": "apps_api_src_lms_courses_courses_controller_ts",
-      "community": 0,
+      "community": 1,
       "norm_label": "courses.controller.ts"
     },
     {
@@ -2277,7 +2286,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L28",
       "id": "courses_controller_lmscoursescontroller",
-      "community": 0,
+      "community": 1,
       "norm_label": "lmscoursescontroller"
     },
     {
@@ -2286,7 +2295,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L31",
       "id": "courses_controller_lmscoursescontroller_constructor",
-      "community": 0,
+      "community": 1,
       "norm_label": ".constructor()"
     },
     {
@@ -2295,7 +2304,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L37",
       "id": "courses_controller_lmscoursescontroller_create",
-      "community": 0,
+      "community": 1,
       "norm_label": ".create()"
     },
     {
@@ -2304,7 +2313,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L52",
       "id": "courses_controller_lmscoursescontroller_findmy",
-      "community": 0,
+      "community": 1,
       "norm_label": ".findmy()"
     },
     {
@@ -2313,7 +2322,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L58",
       "id": "courses_controller_lmscoursescontroller_getcoursebyid",
-      "community": 0,
+      "community": 1,
       "norm_label": ".getcoursebyid()"
     },
     {
@@ -2322,7 +2331,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L67",
       "id": "courses_controller_lmscoursescontroller_update",
-      "community": 0,
+      "community": 1,
       "norm_label": ".update()"
     },
     {
@@ -2331,7 +2340,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L76",
       "id": "courses_controller_lmscoursescontroller_assign",
-      "community": 0,
+      "community": 1,
       "norm_label": ".assign()"
     },
     {
@@ -2340,7 +2349,7 @@
       "source_file": "apps/api/src/lms/courses/courses.controller.ts",
       "source_location": "L90",
       "id": "courses_controller_lmscoursescontroller_remove",
-      "community": 0,
+      "community": 1,
       "norm_label": ".remove()"
     },
     {
@@ -2349,7 +2358,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L1",
       "id": "apps_api_src_lms_courses_course_service_ts",
-      "community": 0,
+      "community": 1,
       "norm_label": "course.service.ts"
     },
     {
@@ -2358,7 +2367,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L24",
       "id": "course_service_courseservice",
-      "community": 0,
+      "community": 1,
       "norm_label": "courseservice"
     },
     {
@@ -2367,7 +2376,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L27",
       "id": "course_service_courseservice_constructor",
-      "community": 0,
+      "community": 1,
       "norm_label": ".constructor()"
     },
     {
@@ -2376,7 +2385,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L38",
       "id": "course_service_courseservice_createcourse",
-      "community": 0,
+      "community": 1,
       "norm_label": ".createcourse()"
     },
     {
@@ -2385,7 +2394,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L62",
       "id": "course_service_courseservice_getmycourses",
-      "community": 0,
+      "community": 1,
       "norm_label": ".getmycourses()"
     },
     {
@@ -2394,7 +2403,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L121",
       "id": "course_service_courseservice_getcoursebyid",
-      "community": 0,
+      "community": 1,
       "norm_label": ".getcoursebyid()"
     },
     {
@@ -2403,7 +2412,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L135",
       "id": "course_service_courseservice_updatecourse",
-      "community": 0,
+      "community": 1,
       "norm_label": ".updatecourse()"
     },
     {
@@ -2421,7 +2430,7 @@
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L195",
       "id": "course_service_courseservice_deletecourse",
-      "community": 0,
+      "community": 1,
       "norm_label": ".deletecourse()"
     },
     {
@@ -2556,7 +2565,7 @@
       "source_file": "apps/api/src/lms/progress/progress.controller.ts",
       "source_location": "L1",
       "id": "apps_api_src_lms_progress_progress_controller_ts",
-      "community": 3,
+      "community": 7,
       "norm_label": "progress.controller.ts"
     },
     {
@@ -2565,7 +2574,7 @@
       "source_file": "apps/api/src/lms/progress/progress.controller.ts",
       "source_location": "L19",
       "id": "progress_controller_progresscontroller",
-      "community": 3,
+      "community": 7,
       "norm_label": "progresscontroller"
     },
     {
@@ -2574,7 +2583,7 @@
       "source_file": "apps/api/src/lms/progress/progress.controller.ts",
       "source_location": "L22",
       "id": "progress_controller_progresscontroller_constructor",
-      "community": 3,
+      "community": 7,
       "norm_label": ".constructor()"
     },
     {
@@ -2583,7 +2592,7 @@
       "source_file": "apps/api/src/lms/progress/progress.controller.ts",
       "source_location": "L32",
       "id": "progress_controller_progresscontroller_upsertprogress",
-      "community": 3,
+      "community": 7,
       "norm_label": ".upsertprogress()"
     },
     {
@@ -2592,7 +2601,7 @@
       "source_file": "apps/api/src/lms/progress/progress.controller.ts",
       "source_location": "L49",
       "id": "progress_controller_progresscontroller_findmy",
-      "community": 3,
+      "community": 7,
       "norm_label": ".findmy()"
     },
     {
@@ -2601,7 +2610,7 @@
       "source_file": "apps/api/src/lms/progress/progress.service.ts",
       "source_location": "L1",
       "id": "apps_api_src_lms_progress_progress_service_ts",
-      "community": 3,
+      "community": 7,
       "norm_label": "progress.service.ts"
     },
     {
@@ -2610,7 +2619,7 @@
       "source_file": "apps/api/src/lms/progress/progress.service.ts",
       "source_location": "L9",
       "id": "progress_service_progressservice",
-      "community": 3,
+      "community": 7,
       "norm_label": "progressservice"
     },
     {
@@ -2619,7 +2628,7 @@
       "source_file": "apps/api/src/lms/progress/progress.service.ts",
       "source_location": "L12",
       "id": "progress_service_progressservice_constructor",
-      "community": 3,
+      "community": 7,
       "norm_label": ".constructor()"
     },
     {
@@ -2628,7 +2637,7 @@
       "source_file": "apps/api/src/lms/progress/progress.service.ts",
       "source_location": "L32",
       "id": "progress_service_progressservice_upsertprogress",
-      "community": 3,
+      "community": 1,
       "norm_label": ".upsertprogress()"
     },
     {
@@ -2637,7 +2646,7 @@
       "source_file": "apps/api/src/lms/progress/progress.service.ts",
       "source_location": "L81",
       "id": "progress_service_progressservice_getmyprogress",
-      "community": 3,
+      "community": 7,
       "norm_label": ".getmyprogress()"
     },
     {
@@ -2682,7 +2691,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L1",
       "id": "apps_api_src_lms_storage_storage_service_ts",
-      "community": 1,
+      "community": 13,
       "norm_label": "storage.service.ts"
     },
     {
@@ -2691,7 +2700,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L7",
       "id": "storage_service_storageservice",
-      "community": 1,
+      "community": 13,
       "norm_label": "storageservice"
     },
     {
@@ -2700,7 +2709,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L19",
       "id": "storage_service_storageservice_constructor",
-      "community": 1,
+      "community": 13,
       "norm_label": ".constructor()"
     },
     {
@@ -2709,7 +2718,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L48",
       "id": "storage_service_storageservice_onmoduleinit",
-      "community": 1,
+      "community": 13,
       "norm_label": ".onmoduleinit()"
     },
     {
@@ -2718,7 +2727,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L67",
       "id": "storage_service_storageservice_createputpresignedurl",
-      "community": 1,
+      "community": 0,
       "norm_label": ".createputpresignedurl()"
     },
     {
@@ -2727,7 +2736,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L92",
       "id": "storage_service_storageservice_checkbucketexists",
-      "community": 1,
+      "community": 13,
       "norm_label": ".checkbucketexists()"
     },
     {
@@ -2736,7 +2745,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L107",
       "id": "storage_service_storageservice_creategetpresignedurl",
-      "community": 1,
+      "community": 13,
       "norm_label": ".creategetpresignedurl()"
     },
     {
@@ -2745,7 +2754,7 @@
       "source_file": "apps/api/src/lms/storage/storage.service.ts",
       "source_location": "L136",
       "id": "storage_service_storageservice_ensurebucketexists",
-      "community": 1,
+      "community": 13,
       "norm_label": ".ensurebucketexists()"
     },
     {
@@ -2763,7 +2772,7 @@
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
       "source_location": "L1",
       "id": "apps_api_src_lms_videos_videos_service_ts",
-      "community": 6,
+      "community": 0,
       "norm_label": "videos.service.ts"
     },
     {
@@ -2772,7 +2781,7 @@
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
       "source_location": "L16",
       "id": "videos_service_videosservice",
-      "community": 6,
+      "community": 0,
       "norm_label": "videosservice"
     },
     {
@@ -2781,7 +2790,7 @@
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
       "source_location": "L19",
       "id": "videos_service_videosservice_constructor",
-      "community": 6,
+      "community": 0,
       "norm_label": ".constructor()"
     },
     {
@@ -2790,43 +2799,43 @@
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
       "source_location": "L32",
       "id": "videos_service_videosservice_createvideo",
-      "community": 1,
+      "community": 0,
       "norm_label": ".createvideo()"
     },
     {
       "label": ".getCourseVideos()",
       "file_type": "code",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L74",
+      "source_location": "L73",
       "id": "videos_service_videosservice_getcoursevideos",
-      "community": 6,
+      "community": 0,
       "norm_label": ".getcoursevideos()"
     },
     {
       "label": ".getCourseVideoById()",
       "file_type": "code",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L85",
+      "source_location": "L84",
       "id": "videos_service_videosservice_getcoursevideobyid",
-      "community": 6,
+      "community": 0,
       "norm_label": ".getcoursevideobyid()"
     },
     {
       "label": ".updateVideo()",
       "file_type": "code",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L111",
+      "source_location": "L110",
       "id": "videos_service_videosservice_updatevideo",
-      "community": 6,
+      "community": 0,
       "norm_label": ".updatevideo()"
     },
     {
       "label": ".deleteVideo()",
       "file_type": "code",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L157",
+      "source_location": "L156",
       "id": "videos_service_videosservice_deletevideo",
-      "community": 6,
+      "community": 0,
       "norm_label": ".deletevideo()"
     },
     {
@@ -2853,7 +2862,7 @@
       "source_file": "apps/api/src/lms/videos/videos.controller.ts",
       "source_location": "L1",
       "id": "apps_api_src_lms_videos_videos_controller_ts",
-      "community": 6,
+      "community": 0,
       "norm_label": "videos.controller.ts"
     },
     {
@@ -2862,7 +2871,7 @@
       "source_file": "apps/api/src/lms/videos/videos.controller.ts",
       "source_location": "L22",
       "id": "videos_controller_videoscontroller",
-      "community": 6,
+      "community": 0,
       "norm_label": "videoscontroller"
     },
     {
@@ -2871,7 +2880,7 @@
       "source_file": "apps/api/src/lms/videos/videos.controller.ts",
       "source_location": "L25",
       "id": "videos_controller_videoscontroller_constructor",
-      "community": 6,
+      "community": 0,
       "norm_label": ".constructor()"
     },
     {
@@ -2889,7 +2898,7 @@
       "source_file": "apps/api/src/lms/videos/videos.controller.ts",
       "source_location": "L42",
       "id": "videos_controller_videoscontroller_findbycourse",
-      "community": 6,
+      "community": 0,
       "norm_label": ".findbycourse()"
     },
     {
@@ -2898,7 +2907,7 @@
       "source_file": "apps/api/src/lms/videos/videos.controller.ts",
       "source_location": "L49",
       "id": "videos_controller_videoscontroller_findone",
-      "community": 6,
+      "community": 0,
       "norm_label": ".findone()"
     },
     {
@@ -2907,7 +2916,7 @@
       "source_file": "apps/api/src/lms/videos/videos.controller.ts",
       "source_location": "L61",
       "id": "videos_controller_videoscontroller_update",
-      "community": 6,
+      "community": 0,
       "norm_label": ".update()"
     },
     {
@@ -2916,7 +2925,7 @@
       "source_file": "apps/api/src/lms/videos/videos.controller.ts",
       "source_location": "L69",
       "id": "videos_controller_videoscontroller_remove",
-      "community": 6,
+      "community": 0,
       "norm_label": ".remove()"
     },
     {
@@ -2970,7 +2979,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L1",
       "id": "apps_api_src_auth_auth_service_ts",
-      "community": 2,
+      "community": 3,
       "norm_label": "auth.service.ts"
     },
     {
@@ -2979,7 +2988,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L23",
       "id": "auth_service_authservice",
-      "community": 2,
+      "community": 3,
       "norm_label": "authservice"
     },
     {
@@ -2988,7 +2997,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L25",
       "id": "auth_service_authservice_constructor",
-      "community": 2,
+      "community": 3,
       "norm_label": ".constructor()"
     },
     {
@@ -2997,7 +3006,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L32",
       "id": "auth_service_authservice_normalizemultilinekey",
-      "community": 2,
+      "community": 3,
       "norm_label": ".normalizemultilinekey()"
     },
     {
@@ -3006,7 +3015,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L36",
       "id": "auth_service_authservice_verifyasymmetrictoken",
-      "community": 2,
+      "community": 3,
       "norm_label": ".verifyasymmetrictoken()"
     },
     {
@@ -3015,7 +3024,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L66",
       "id": "auth_service_authservice_issueaccesstoken",
-      "community": 2,
+      "community": 3,
       "norm_label": ".issueaccesstoken()"
     },
     {
@@ -3024,7 +3033,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L86",
       "id": "auth_service_authservice_createrefreshtoken",
-      "community": 2,
+      "community": 3,
       "norm_label": ".createrefreshtoken()"
     },
     {
@@ -3033,7 +3042,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L117",
       "id": "auth_service_authservice_parserefreshtoken",
-      "community": 2,
+      "community": 3,
       "norm_label": ".parserefreshtoken()"
     },
     {
@@ -3042,7 +3051,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L126",
       "id": "auth_service_authservice_rotaterefreshtoken",
-      "community": 2,
+      "community": 3,
       "norm_label": ".rotaterefreshtoken()"
     },
     {
@@ -3051,7 +3060,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L182",
       "id": "auth_service_authservice_revokerefreshtoken",
-      "community": 2,
+      "community": 3,
       "norm_label": ".revokerefreshtoken()"
     },
     {
@@ -3060,7 +3069,7 @@
       "source_file": "apps/api/src/auth/auth.service.ts",
       "source_location": "L190",
       "id": "auth_service_authservice_revokeallrefreshtokensforuser",
-      "community": 2,
+      "community": 3,
       "norm_label": ".revokeallrefreshtokensforuser()"
     },
     {
@@ -3096,7 +3105,7 @@
       "source_file": "apps/api/src/auth/auth.controller.ts",
       "source_location": "L1",
       "id": "apps_api_src_auth_auth_controller_ts",
-      "community": 2,
+      "community": 3,
       "norm_label": "auth.controller.ts"
     },
     {
@@ -3105,7 +3114,7 @@
       "source_file": "apps/api/src/auth/auth.controller.ts",
       "source_location": "L21",
       "id": "auth_controller_authcontroller",
-      "community": 2,
+      "community": 3,
       "norm_label": "authcontroller"
     },
     {
@@ -3114,7 +3123,7 @@
       "source_file": "apps/api/src/auth/auth.controller.ts",
       "source_location": "L22",
       "id": "auth_controller_authcontroller_constructor",
-      "community": 2,
+      "community": 3,
       "norm_label": ".constructor()"
     },
     {
@@ -3123,7 +3132,7 @@
       "source_file": "apps/api/src/auth/auth.controller.ts",
       "source_location": "L28",
       "id": "auth_controller_authcontroller_verifytoken",
-      "community": 2,
+      "community": 3,
       "norm_label": ".verifytoken()"
     },
     {
@@ -3132,7 +3141,7 @@
       "source_file": "apps/api/src/auth/auth.controller.ts",
       "source_location": "L44",
       "id": "auth_controller_authcontroller_refresh",
-      "community": 2,
+      "community": 3,
       "norm_label": ".refresh()"
     },
     {
@@ -3141,7 +3150,7 @@
       "source_file": "apps/api/src/auth/auth.controller.ts",
       "source_location": "L70",
       "id": "auth_controller_authcontroller_logout",
-      "community": 2,
+      "community": 3,
       "norm_label": ".logout()"
     },
     {
@@ -3321,71 +3330,80 @@
       "source_file": "apps/video-processing/src/app.service.ts",
       "source_location": "L1",
       "id": "apps_video_processing_src_app_service_ts",
-      "community": 4,
+      "community": 2,
       "norm_label": "app.service.ts"
     },
     {
       "label": ".createMasterPlaylist()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L102",
+      "source_location": "L100",
       "id": "app_service_appservice_createmasterplaylist",
-      "community": 4,
+      "community": 2,
       "norm_label": ".createmasterplaylist()"
     },
     {
       "label": ".resolveProcessingDir()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L113",
+      "source_location": "L111",
       "id": "app_service_appservice_resolveprocessingdir",
-      "community": 4,
+      "community": 2,
       "norm_label": ".resolveprocessingdir()"
     },
     {
       "label": ".processVideo()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L127",
+      "source_location": "L125",
       "id": "app_service_appservice_processvideo",
-      "community": 4,
+      "community": 2,
       "norm_label": ".processvideo()"
     },
     {
       "label": ".cleanupFiles()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L165",
+      "source_location": "L180",
       "id": "app_service_appservice_cleanupfiles",
-      "community": 4,
+      "community": 2,
       "norm_label": ".cleanupfiles()"
     },
     {
       "label": ".downloadFromS3()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L178",
+      "source_location": "L193",
       "id": "app_service_appservice_downloadfroms3",
-      "community": 4,
+      "community": 2,
       "norm_label": ".downloadfroms3()"
     },
     {
       "label": ".runFFmpeg()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L199",
+      "source_location": "L214",
       "id": "app_service_appservice_runffmpeg",
-      "community": 4,
+      "community": 2,
       "norm_label": ".runffmpeg()"
     },
     {
       "label": ".uploadFolderToS3()",
       "file_type": "code",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L254",
+      "source_location": "L285",
       "id": "app_service_appservice_uploadfoldertos3",
-      "community": 4,
+      "community": 2,
       "norm_label": ".uploadfoldertos3()"
+    },
+    {
+      "label": ".extractDuration()",
+      "file_type": "code",
+      "source_file": "apps/video-processing/src/app.service.ts",
+      "source_location": "L318",
+      "id": "app_service_appservice_extractduration",
+      "community": 2,
+      "norm_label": ".extractduration()"
     },
     {
       "label": "app.controller.spec.ts",
@@ -3490,7 +3508,7 @@
       "label": "buildMediaUrl()",
       "file_type": "code",
       "source_file": "apps/web/src/components/MyPlayer.tsx",
-      "source_location": "L47",
+      "source_location": "L51",
       "id": "myplayer_buildmediaurl",
       "community": 48,
       "norm_label": "buildmediaurl()"
@@ -3499,7 +3517,7 @@
       "label": "handleVisibilityChange()",
       "file_type": "code",
       "source_file": "apps/web/src/components/MyPlayer.tsx",
-      "source_location": "L182",
+      "source_location": "L186",
       "id": "myplayer_handlevisibilitychange",
       "community": 48,
       "norm_label": "handlevisibilitychange()"
@@ -3521,6 +3539,33 @@
       "id": "coursecard_formatupdateddate",
       "community": 91,
       "norm_label": "formatupdateddate()"
+    },
+    {
+      "label": "CourseFormPanel.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/CourseFormPanel.tsx",
+      "source_location": "L1",
+      "id": "apps_web_src_components_courseformpanel_tsx",
+      "community": 1,
+      "norm_label": "courseformpanel.tsx"
+    },
+    {
+      "label": "onSubmit()",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/CourseFormPanel.tsx",
+      "source_location": "L129",
+      "id": "courseformpanel_onsubmit",
+      "community": 1,
+      "norm_label": "onsubmit()"
+    },
+    {
+      "label": "handleCancel()",
+      "file_type": "code",
+      "source_file": "apps/web/src/components/CourseFormPanel.tsx",
+      "source_location": "L144",
+      "id": "courseformpanel_handlecancel",
+      "community": 1,
+      "norm_label": "handlecancel()"
     },
     {
       "label": "theme-provider.tsx",
@@ -3634,7 +3679,7 @@
       "label": "getCourseState()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L35",
+      "source_location": "L36",
       "id": "coursespage_getcoursestate",
       "community": 18,
       "norm_label": "getcoursestate()"
@@ -3643,7 +3688,7 @@
       "label": "getLastActivity()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L47",
+      "source_location": "L48",
       "id": "coursespage_getlastactivity",
       "community": 18,
       "norm_label": "getlastactivity()"
@@ -3652,7 +3697,7 @@
       "label": "formatRelativeActivity()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L57",
+      "source_location": "L58",
       "id": "coursespage_formatrelativeactivity",
       "community": 18,
       "norm_label": "formatrelativeactivity()"
@@ -3661,7 +3706,7 @@
       "label": "buildCourseSummaries()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L79",
+      "source_location": "L80",
       "id": "coursespage_buildcoursesummaries",
       "community": 18,
       "norm_label": "buildcoursesummaries()"
@@ -3670,7 +3715,7 @@
       "label": "handleRetry()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L178",
+      "source_location": "L180",
       "id": "coursespage_handleretry",
       "community": 18,
       "norm_label": "handleretry()"
@@ -3717,70 +3762,70 @@
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
       "source_location": "L1",
       "id": "apps_web_src_pages_coursedetailpage_tsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "coursedetailpage.tsx"
     },
     {
-      "label": "formatLessonDuration()",
+      "label": "formatDuration()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
       "source_location": "L43",
-      "id": "coursedetailpage_formatlessonduration",
-      "community": 1,
-      "norm_label": "formatlessonduration()"
+      "id": "coursedetailpage_formatduration",
+      "community": 0,
+      "norm_label": "formatduration()"
     },
     {
       "label": "getVideoStatus()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L54",
+      "source_location": "L55",
       "id": "coursedetailpage_getvideostatus",
-      "community": 1,
+      "community": 0,
       "norm_label": "getvideostatus()"
     },
     {
       "label": "getWatchedPercent()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L86",
+      "source_location": "L87",
       "id": "coursedetailpage_getwatchedpercent",
-      "community": 1,
+      "community": 0,
       "norm_label": "getwatchedpercent()"
     },
     {
       "label": "handleRetry()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L207",
+      "source_location": "L208",
       "id": "coursedetailpage_handleretry",
-      "community": 1,
+      "community": 0,
       "norm_label": "handleretry()"
     },
     {
       "label": "openCreateVideo()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L213",
+      "source_location": "L214",
       "id": "coursedetailpage_opencreatevideo",
-      "community": 1,
+      "community": 0,
       "norm_label": "opencreatevideo()"
     },
     {
       "label": "uploadFilesByUrls()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L218",
+      "source_location": "L219",
       "id": "coursedetailpage_uploadfilesbyurls",
-      "community": 1,
+      "community": 0,
       "norm_label": "uploadfilesbyurls()"
     },
     {
       "label": "handleSaveVideo()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L261",
+      "source_location": "L262",
       "id": "coursedetailpage_handlesavevideo",
-      "community": 1,
+      "community": 0,
       "norm_label": "handlesavevideo()"
     },
     {
@@ -3789,25 +3834,25 @@
       "source_file": "apps/web/src/pages/VideoPlayerPage.tsx",
       "source_location": "L1",
       "id": "apps_web_src_pages_videoplayerpage_tsx",
-      "community": 10,
+      "community": 9,
       "norm_label": "videoplayerpage.tsx"
     },
     {
       "label": "formatLessonDuration()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/VideoPlayerPage.tsx",
-      "source_location": "L30",
+      "source_location": "L29",
       "id": "videoplayerpage_formatlessonduration",
-      "community": 10,
+      "community": 9,
       "norm_label": "formatlessonduration()"
     },
     {
       "label": "getPlaybackUnavailableCopy()",
       "file_type": "code",
       "source_file": "apps/web/src/pages/VideoPlayerPage.tsx",
-      "source_location": "L38",
+      "source_location": "L42",
       "id": "videoplayerpage_getplaybackunavailablecopy",
-      "community": 10,
+      "community": 9,
       "norm_label": "getplaybackunavailablecopy()"
     },
     {
@@ -3933,7 +3978,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L1",
       "id": "apps_web_src_store_axio_axiosinstance_ts",
-      "community": 5,
+      "community": 4,
       "norm_label": "axiosinstance.ts"
     },
     {
@@ -3942,7 +3987,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L19",
       "id": "axiosinstance_injectstore",
-      "community": 5,
+      "community": 4,
       "norm_label": "injectstore()"
     },
     {
@@ -3951,7 +3996,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L52",
       "id": "axiosinstance_isauthendpoint",
-      "community": 5,
+      "community": 4,
       "norm_label": "isauthendpoint()"
     },
     {
@@ -3960,7 +4005,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L65",
       "id": "axiosinstance_redirecttoautherror",
-      "community": 5,
+      "community": 4,
       "norm_label": "redirecttoautherror()"
     },
     {
@@ -3969,7 +4014,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L71",
       "id": "axiosinstance_clearstoredauth",
-      "community": 5,
+      "community": 4,
       "norm_label": "clearstoredauth()"
     },
     {
@@ -3978,7 +4023,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L81",
       "id": "axiosinstance_persisttokens",
-      "community": 5,
+      "community": 4,
       "norm_label": "persisttokens()"
     },
     {
@@ -3987,7 +4032,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L107",
       "id": "axiosinstance_getstoredrefreshtoken",
-      "community": 5,
+      "community": 4,
       "norm_label": "getstoredrefreshtoken()"
     },
     {
@@ -3996,7 +4041,7 @@
       "source_file": "apps/web/src/store/axio/axiosInstance.ts",
       "source_location": "L123",
       "id": "axiosinstance_refreshaccesstoken",
-      "community": 5,
+      "community": 4,
       "norm_label": "refreshaccesstoken()"
     },
     {
@@ -4014,7 +4059,7 @@
       "source_file": "apps/web/src/utils/mock-data.ts",
       "source_location": "L1",
       "id": "apps_web_src_utils_mock_data_ts",
-      "community": 10,
+      "community": 9,
       "norm_label": "mock-data.ts"
     },
     {
@@ -4023,7 +4068,7 @@
       "source_file": "apps/web/src/utils/mock-data.ts",
       "source_location": "L113",
       "id": "mock_data_getvideosforcourse",
-      "community": 10,
+      "community": 9,
       "norm_label": "getvideosforcourse()"
     },
     {
@@ -4032,7 +4077,7 @@
       "source_file": "apps/web/src/utils/mock-data.ts",
       "source_location": "L117",
       "id": "mock_data_getprogressforvideo",
-      "community": 10,
+      "community": 9,
       "norm_label": "getprogressforvideo()"
     },
     {
@@ -4041,7 +4086,7 @@
       "source_file": "apps/web/src/utils/mock-data.ts",
       "source_location": "L121",
       "id": "mock_data_getcourseprogress",
-      "community": 10,
+      "community": 9,
       "norm_label": "getcourseprogress()"
     },
     {
@@ -4050,7 +4095,7 @@
       "source_file": "apps/web/src/utils/mock-data.ts",
       "source_location": "L132",
       "id": "mock_data_formatduration",
-      "community": 10,
+      "community": 9,
       "norm_label": "formatduration()"
     }
   ],
@@ -6015,7 +6060,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "_src": "apps_api_src_app_service_ts",
       "_tgt": "app_service_appservice",
@@ -6039,7 +6084,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L52",
+      "source_location": "L54",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_onmoduleinit",
@@ -6051,7 +6096,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L47",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_gethello",
@@ -6063,7 +6108,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L57",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_pollqueue",
@@ -6075,7 +6120,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L97",
+      "source_location": "L119",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_processprocessedvideokey",
@@ -6087,7 +6132,19 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L146",
+      "source_location": "L196",
+      "weight": 1.0,
+      "_src": "app_service_appservice",
+      "_tgt": "app_service_appservice_getmetadatafroms3",
+      "source": "app_service_appservice",
+      "target": "app_service_appservice_getmetadatafroms3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/app.service.ts",
+      "source_location": "L211",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_buildplaybackurl",
@@ -6111,7 +6168,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L102",
+      "source_location": "L100",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_createmasterplaylist",
@@ -6123,7 +6180,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L113",
+      "source_location": "L111",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_resolveprocessingdir",
@@ -6135,7 +6192,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L127",
+      "source_location": "L125",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_processvideo",
@@ -6147,7 +6204,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L165",
+      "source_location": "L180",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_cleanupfiles",
@@ -6159,7 +6216,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L178",
+      "source_location": "L193",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_downloadfroms3",
@@ -6171,7 +6228,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L199",
+      "source_location": "L214",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_runffmpeg",
@@ -6183,7 +6240,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L254",
+      "source_location": "L285",
       "weight": 1.0,
       "_src": "app_service_appservice",
       "_tgt": "app_service_appservice_uploadfoldertos3",
@@ -6192,10 +6249,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/video-processing/src/app.service.ts",
+      "source_location": "L318",
+      "weight": 1.0,
+      "_src": "app_service_appservice",
+      "_tgt": "app_service_appservice_extractduration",
+      "source": "app_service_appservice",
+      "target": "app_service_appservice_extractduration",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L49",
+      "source_location": "L51",
       "weight": 1.0,
       "_src": "app_service_appservice_constructor",
       "_tgt": "app_service_appservice_resolveprocessingdir",
@@ -6207,7 +6276,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L54",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "app_service_appservice_onmoduleinit",
       "_tgt": "app_service_appservice_pollqueue",
@@ -6219,7 +6288,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/app.service.ts",
-      "source_location": "L79",
+      "source_location": "L101",
       "weight": 1.0,
       "_src": "app_service_appservice_pollqueue",
       "_tgt": "app_service_appservice_processprocessedvideokey",
@@ -6231,12 +6300,24 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L83",
+      "source_location": "L84",
       "weight": 1.0,
       "_src": "app_service_appservice_pollqueue",
       "_tgt": "app_service_appservice_processvideo",
       "source": "app_service_appservice_pollqueue",
       "target": "app_service_appservice_processvideo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/app.service.ts",
+      "source_location": "L158",
+      "weight": 1.0,
+      "_src": "app_service_appservice_processprocessedvideokey",
+      "_tgt": "app_service_appservice_getmetadatafroms3",
+      "source": "app_service_appservice_processprocessedvideokey",
+      "target": "app_service_appservice_getmetadatafroms3",
       "confidence_score": 1.0
     },
     {
@@ -6255,7 +6336,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/app.module.ts",
-      "source_location": "L22",
+      "source_location": "L25",
       "weight": 1.0,
       "_src": "apps_api_src_app_module_ts",
       "_tgt": "app_module_appmodule",
@@ -6675,6 +6756,18 @@
       "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
+      "source_file": "apps/web/src/components/CourseFormPanel.tsx",
+      "source_location": "L131",
+      "weight": 1.0,
+      "_src": "course_service_courseservice_createcourse",
+      "_tgt": "courseformpanel_onsubmit",
+      "source": "course_service_courseservice_createcourse",
+      "target": "courseformpanel_onsubmit"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "apps/api/src/lms/courses/course.service.ts",
       "source_location": "L173",
       "weight": 1.0,
@@ -7035,7 +7128,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L74",
+      "source_location": "L73",
       "weight": 1.0,
       "_src": "videos_service_videosservice",
       "_tgt": "videos_service_videosservice_getcoursevideos",
@@ -7047,7 +7140,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L85",
+      "source_location": "L84",
       "weight": 1.0,
       "_src": "videos_service_videosservice",
       "_tgt": "videos_service_videosservice_getcoursevideobyid",
@@ -7059,7 +7152,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L111",
+      "source_location": "L110",
       "weight": 1.0,
       "_src": "videos_service_videosservice",
       "_tgt": "videos_service_videosservice_updatevideo",
@@ -7071,7 +7164,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/api/src/lms/videos/videos.service.ts",
-      "source_location": "L157",
+      "source_location": "L156",
       "weight": 1.0,
       "_src": "videos_service_videosservice",
       "_tgt": "videos_service_videosservice_deletevideo",
@@ -7683,7 +7776,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L148",
+      "source_location": "L149",
       "weight": 1.0,
       "_src": "app_service_appservice_processvideo",
       "_tgt": "app_service_appservice_createmasterplaylist",
@@ -7695,12 +7788,24 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L140",
+      "source_location": "L138",
       "weight": 1.0,
       "_src": "app_service_appservice_processvideo",
       "_tgt": "app_service_appservice_downloadfroms3",
       "source": "app_service_appservice_processvideo",
       "target": "app_service_appservice_downloadfroms3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/video-processing/src/app.service.ts",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_src": "app_service_appservice_processvideo",
+      "_tgt": "app_service_appservice_extractduration",
+      "source": "app_service_appservice_processvideo",
+      "target": "app_service_appservice_extractduration",
       "confidence_score": 1.0
     },
     {
@@ -7719,7 +7824,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L155",
+      "source_location": "L169",
       "weight": 1.0,
       "_src": "app_service_appservice_processvideo",
       "_tgt": "app_service_appservice_uploadfoldertos3",
@@ -7731,7 +7836,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/video-processing/src/app.service.ts",
-      "source_location": "L161",
+      "source_location": "L176",
       "weight": 1.0,
       "_src": "app_service_appservice_processvideo",
       "_tgt": "app_service_appservice_cleanupfiles",
@@ -7755,7 +7860,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/MyPlayer.tsx",
-      "source_location": "L47",
+      "source_location": "L51",
       "weight": 1.0,
       "_src": "apps_web_src_components_myplayer_tsx",
       "_tgt": "myplayer_buildmediaurl",
@@ -7767,7 +7872,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/components/MyPlayer.tsx",
-      "source_location": "L182",
+      "source_location": "L186",
       "weight": 1.0,
       "_src": "apps_web_src_components_myplayer_tsx",
       "_tgt": "myplayer_handlevisibilitychange",
@@ -7785,6 +7890,30 @@
       "_tgt": "coursecard_formatupdateddate",
       "source": "apps_web_src_components_coursecard_tsx",
       "target": "coursecard_formatupdateddate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/CourseFormPanel.tsx",
+      "source_location": "L129",
+      "weight": 1.0,
+      "_src": "apps_web_src_components_courseformpanel_tsx",
+      "_tgt": "courseformpanel_onsubmit",
+      "source": "apps_web_src_components_courseformpanel_tsx",
+      "target": "courseformpanel_onsubmit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/components/CourseFormPanel.tsx",
+      "source_location": "L144",
+      "weight": 1.0,
+      "_src": "apps_web_src_components_courseformpanel_tsx",
+      "_tgt": "courseformpanel_handlecancel",
+      "source": "apps_web_src_components_courseformpanel_tsx",
+      "target": "courseformpanel_handlecancel",
       "confidence_score": 1.0
     },
     {
@@ -7887,7 +8016,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursespage_tsx",
       "_tgt": "coursespage_getcoursestate",
@@ -7899,7 +8028,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursespage_tsx",
       "_tgt": "coursespage_getlastactivity",
@@ -7911,7 +8040,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursespage_tsx",
       "_tgt": "coursespage_formatrelativeactivity",
@@ -7923,7 +8052,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursespage_tsx",
       "_tgt": "coursespage_buildcoursesummaries",
@@ -7935,7 +8064,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CoursesPage.tsx",
-      "source_location": "L178",
+      "source_location": "L180",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursespage_tsx",
       "_tgt": "coursespage_handleretry",
@@ -7974,16 +8103,16 @@
       "source_location": "L43",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursedetailpage_tsx",
-      "_tgt": "coursedetailpage_formatlessonduration",
+      "_tgt": "coursedetailpage_formatduration",
       "source": "apps_web_src_pages_coursedetailpage_tsx",
-      "target": "coursedetailpage_formatlessonduration",
+      "target": "coursedetailpage_formatduration",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursedetailpage_tsx",
       "_tgt": "coursedetailpage_getvideostatus",
@@ -7995,7 +8124,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L86",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursedetailpage_tsx",
       "_tgt": "coursedetailpage_getwatchedpercent",
@@ -8007,7 +8136,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L207",
+      "source_location": "L208",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursedetailpage_tsx",
       "_tgt": "coursedetailpage_handleretry",
@@ -8019,7 +8148,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L213",
+      "source_location": "L214",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursedetailpage_tsx",
       "_tgt": "coursedetailpage_opencreatevideo",
@@ -8031,7 +8160,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L218",
+      "source_location": "L219",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursedetailpage_tsx",
       "_tgt": "coursedetailpage_uploadfilesbyurls",
@@ -8043,7 +8172,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L261",
+      "source_location": "L262",
       "weight": 1.0,
       "_src": "apps_web_src_pages_coursedetailpage_tsx",
       "_tgt": "coursedetailpage_handlesavevideo",
@@ -8055,7 +8184,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/CourseDetailPage.tsx",
-      "source_location": "L298",
+      "source_location": "L307",
       "weight": 1.0,
       "_src": "coursedetailpage_handlesavevideo",
       "_tgt": "coursedetailpage_uploadfilesbyurls",
@@ -8067,7 +8196,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/VideoPlayerPage.tsx",
-      "source_location": "L30",
+      "source_location": "L29",
       "weight": 1.0,
       "_src": "apps_web_src_pages_videoplayerpage_tsx",
       "_tgt": "videoplayerpage_formatlessonduration",
@@ -8079,7 +8208,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/web/src/pages/VideoPlayerPage.tsx",
-      "source_location": "L38",
+      "source_location": "L42",
       "weight": 1.0,
       "_src": "apps_web_src_pages_videoplayerpage_tsx",
       "_tgt": "videoplayerpage_getplaybackunavailablecopy",

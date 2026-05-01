@@ -5,18 +5,22 @@ import {
   MediaTimeRange,
   MediaTimeDisplay,
   MediaVolumeRange,
-  MediaPlaybackRateButton,
   MediaPlayButton,
   MediaSeekBackwardButton,
   MediaSeekForwardButton,
   MediaMuteButton,
   MediaFullscreenButton,
-  MediaPipButton,
-  MediaCaptionsButton,
   MediaLoadingIndicator,
   MediaGestureReceiver,
-  MediaAirplayButton,
 } from "media-chrome/react"
+import {
+  MediaSettingsMenuButton,
+  MediaSettingsMenu,
+  MediaSettingsMenuItem,
+  MediaRenditionMenu,
+  MediaPlaybackRateMenu,
+} from "media-chrome/react/menu"
+
 import { AlertTriangle, RefreshCcw } from "lucide-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
@@ -221,13 +225,13 @@ export const MyPlayer = ({
         </div>
       ) : (
         <MediaController
-          className="block h-full w-full overflow-hidden bg-[oklch(0.145_0_0)] [--media-control-background:oklch(0.145_0_0_/_82%)] [--media-control-hover-background:oklch(0.985_0_0_/_12%)] [--media-control-padding:0.5rem] [--media-primary-color:oklch(0.985_0_0)] [--media-secondary-color:oklch(0.985_0_0_/_70%)]"
+          className="flex h-full w-full flex-col overflow-hidden "
           gesturesDisabled={false}
         >
           <ReactPlayer
             ref={playerRef}
             slot="media"
-            className="h-full w-full"
+            className="min-h-0 flex-1 w-full"
             src={mediaUrl}
             playing={isPlaying}
             controls={false}
@@ -242,12 +246,12 @@ export const MyPlayer = ({
             light={
               thumbnail_url
                 ? (
-                    <img
-                      src={thumbnail_url}
-                      alt={title ? `${title} thumbnail` : "Video thumbnail"}
-                      className="h-full w-full object-cover"
-                    />
-                  )
+                  <img
+                    src={thumbnail_url}
+                    alt={title ? `${title} thumbnail` : "Video thumbnail"}
+                    className="h-full w-full object-cover"
+                  />
+                )
                 : false
             }
             onReady={handleReady}
@@ -268,8 +272,6 @@ export const MyPlayer = ({
 
           <MediaLoadingIndicator
             slot="centered-chrome"
-            className="rounded-lg bg-[oklch(0.145_0_0_/_78%)] p-3 text-[oklch(0.985_0_0)]"
-            noAutohide
           />
 
           <MediaGestureReceiver slot="centered-chrome" />
@@ -283,7 +285,8 @@ export const MyPlayer = ({
             </div>
           )}
 
-          <MediaControlBar className="flex w-full min-w-0 flex-wrap items-center gap-1 border-t border-[oklch(0.985_0_0_/_12%)] bg-[oklch(0.145_0_0_/_88%)] p-2 text-[oklch(0.985_0_0)] backdrop-blur-sm [&>*]:min-h-10 [&>*]:rounded-md [&>*]:focus-visible:outline-none [&>*]:focus-visible:ring-3 [&>*]:focus-visible:ring-[oklch(0.708_0_0_/_55%)]">
+          <MediaControlBar className="flex w-full min-w-0 shrink-0 flex-wrap
+          items-center gap-1 border-t border-[oklch(0.985_0_0_/_12%)] bg-[oklch(0.145_0_0_/_88%)] p-2 text-[oklch(0.985_0_0)] backdrop-blur-sm [&>*]:min-h-10 [&>*]:rounded-md [&>*]:focus-visible:outline-none [&>*]:focus-visible:ring-3 [&>*]:focus-visible:ring-[oklch(0.708_0_0_/_55%)]">
             <MediaPlayButton />
             <MediaSeekBackwardButton seekOffset={10} />
             <MediaSeekForwardButton seekOffset={10} />
@@ -291,12 +294,31 @@ export const MyPlayer = ({
             <MediaVolumeRange className="hidden w-20 sm:block" />
             <MediaTimeRange className="min-w-32 flex-1 basis-40" />
             <MediaTimeDisplay showDuration />
-            <MediaCaptionsButton />
-            <MediaPlaybackRateButton rates={[0.5, 1, 1.25, 1.5, 2]} />
-            <MediaPipButton />
-            <MediaAirplayButton />
+
+            <MediaSettingsMenuButton />
             <MediaFullscreenButton />
           </MediaControlBar>
+
+          {/* <MediaCaptionsButton /> */}
+          <MediaSettingsMenu
+            slot="dialog"
+            hidden
+            anchor="auto"
+            className="z-10 min-w-44 p-1 overflow-hidden rounded-md border gap-2 border-[oklch(0.985_0_0_/_12%)] bg-[oklch(0.145_0_0)] text-sm text-[oklch(0.985_0_0)] shadow-none [--media-menu-background:oklch(0.145_0_0)] [--media-menu-border-radius:0.375rem] [--media-menu-border:1px_solid_oklch(0.985_0_0_/_12%)] [--media-menu-item-checked-background:oklch(0.985_0_0_/_16%)] [--media-menu-item-focus-shadow:inset_0_0_0_2px_oklch(0.708_0_0_/_55%)] [--media-menu-item-hover-background:oklch(0.985_0_0_/_12%)] [--media-settings-menu-background:oklch(0.145_0_0)]"
+          >
+            <MediaSettingsMenuItem className="mb-2">
+              Speed
+              <MediaPlaybackRateMenu slot="submenu" hidden>
+                <div slot="title">Speed</div>
+              </MediaPlaybackRateMenu>
+            </MediaSettingsMenuItem>
+            <MediaSettingsMenuItem>
+              Quality
+              <MediaRenditionMenu slot="submenu" hidden>
+                <div slot="title">Quality</div>
+              </MediaRenditionMenu>
+            </MediaSettingsMenuItem>
+          </MediaSettingsMenu>
         </MediaController>
       )}
     </div>

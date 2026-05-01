@@ -1,12 +1,12 @@
 # Graph Report - video-upload  (2026-05-01)
 
 ## Corpus Check
-- 161 files · ~36,376 words
+- 162 files · ~37,647 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 450 nodes · 356 edges · 35 communities detected
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.8)
+- 455 nodes · 363 edges · 35 communities detected
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 33 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -15,10 +15,10 @@
 - [[_COMMUNITY_Community 2|Community 2]]
 - [[_COMMUNITY_Community 3|Community 3]]
 - [[_COMMUNITY_Community 4|Community 4]]
-- [[_COMMUNITY_Community 5|Community 5]]
-- [[_COMMUNITY_Community 6|Community 6]]
-- [[_COMMUNITY_Community 10|Community 10]]
-- [[_COMMUNITY_Community 12|Community 12]]
+- [[_COMMUNITY_Community 7|Community 7]]
+- [[_COMMUNITY_Community 9|Community 9]]
+- [[_COMMUNITY_Community 11|Community 11]]
+- [[_COMMUNITY_Community 13|Community 13]]
 - [[_COMMUNITY_Community 17|Community 17]]
 - [[_COMMUNITY_Community 20|Community 20]]
 - [[_COMMUNITY_Community 23|Community 23]]
@@ -47,7 +47,7 @@
 - [[_COMMUNITY_Community 88|Community 88]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `AppService` - 15 edges
+1. `AppService` - 17 edges
 2. `AuthService` - 10 edges
 3. `LmsCoursesController` - 8 edges
 4. `CourseService` - 8 edges
@@ -73,40 +73,40 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.11
-Nodes (3): CourseService, LmsCoursesController, bootstrap()
+Cohesion: 0.08
+Nodes (5): handleSaveVideo(), uploadFilesByUrls(), bootstrap(), VideosController, VideosService
 
 ### Community 1 - "Community 1"
-Cohesion: 0.14
-Nodes (3): handleSaveVideo(), uploadFilesByUrls(), StorageService
+Cohesion: 0.08
+Nodes (4): CourseService, onSubmit(), LmsCoursesController, Select()
 
 ### Community 2 - "Community 2"
+Cohesion: 0.18
+Nodes (1): AppService
+
+### Community 3 - "Community 3"
 Cohesion: 0.19
 Nodes (2): AuthController, AuthService
 
-### Community 3 - "Community 3"
-Cohesion: 0.12
-Nodes (3): ProgressController, ProgressService, Select()
-
 ### Community 4 - "Community 4"
-Cohesion: 0.2
-Nodes (1): AppService
-
-### Community 5 - "Community 5"
 Cohesion: 0.2
 Nodes (9): clearStoredAuth(), getStoredRefreshToken(), persistTokens(), refreshAccessToken(), addToRemoveQueue(), dispatch(), genId(), reducer() (+1 more)
 
-### Community 6 - "Community 6"
-Cohesion: 0.18
-Nodes (2): VideosController, VideosService
+### Community 7 - "Community 7"
+Cohesion: 0.22
+Nodes (2): ProgressController, ProgressService
 
-### Community 10 - "Community 10"
+### Community 9 - "Community 9"
 Cohesion: 0.29
 Nodes (4): formatDuration(), getCourseProgress(), getVideosForCourse(), formatLessonDuration()
 
-### Community 12 - "Community 12"
+### Community 11 - "Community 11"
 Cohesion: 0.33
 Nodes (2): SidebarMenuButton(), useSidebar()
+
+### Community 13 - "Community 13"
+Cohesion: 0.38
+Nodes (1): StorageService
 
 ### Community 17 - "Community 17"
 Cohesion: 0.33
@@ -215,13 +215,15 @@ Nodes (1): JwtAuthGuard
 ## Knowledge Gaps
 - **16 isolated node(s):** `DatabaseModule`, `Course`, `CourseAssignment`, `VideoProgress`, `Video` (+11 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 2`** (17 nodes): `auth.controller.ts`, `auth.service.ts`, `AuthController`, `.constructor()`, `.logout()`, `.refresh()`, `.verifyToken()`, `AuthService`, `.constructor()`, `.createRefreshToken()`, `.issueAccessToken()`, `.normalizeMultilineKey()`, `.parseRefreshToken()`, `.revokeAllRefreshTokensForUser()`, `.revokeRefreshToken()`, `.rotateRefreshToken()`, `.verifyAsymmetricToken()`
+- **Thin community `Community 2`** (18 nodes): `AppService`, `.buildPlaybackUrl()`, `.cleanupFiles()`, `.constructor()`, `.createMasterPlaylist()`, `.downloadFromS3()`, `.extractDuration()`, `.getHello()`, `.getMetadataFromS3()`, `.onModuleInit()`, `.pollQueue()`, `.processProcessedVideoKey()`, `.processVideo()`, `.resolveProcessingDir()`, `.runFFmpeg()`, `.uploadFolderToS3()`, `app.service.ts`, `app.service.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 4`** (16 nodes): `AppService`, `.buildPlaybackUrl()`, `.cleanupFiles()`, `.constructor()`, `.createMasterPlaylist()`, `.downloadFromS3()`, `.getHello()`, `.onModuleInit()`, `.pollQueue()`, `.processProcessedVideoKey()`, `.processVideo()`, `.resolveProcessingDir()`, `.runFFmpeg()`, `.uploadFolderToS3()`, `app.service.ts`, `app.service.ts`
+- **Thin community `Community 3`** (17 nodes): `auth.controller.ts`, `auth.service.ts`, `AuthController`, `.constructor()`, `.logout()`, `.refresh()`, `.verifyToken()`, `AuthService`, `.constructor()`, `.createRefreshToken()`, `.issueAccessToken()`, `.normalizeMultilineKey()`, `.parseRefreshToken()`, `.revokeAllRefreshTokensForUser()`, `.revokeRefreshToken()`, `.rotateRefreshToken()`, `.verifyAsymmetricToken()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 6`** (14 nodes): `videos.controller.ts`, `videos.service.ts`, `VideosController`, `.constructor()`, `.findByCourse()`, `.findOne()`, `.remove()`, `.update()`, `VideosService`, `.constructor()`, `.deleteVideo()`, `.getCourseVideoById()`, `.getCourseVideos()`, `.updateVideo()`
+- **Thin community `Community 7`** (9 nodes): `progress.controller.ts`, `progress.service.ts`, `ProgressController`, `.constructor()`, `.findMy()`, `.upsertProgress()`, `ProgressService`, `.constructor()`, `.getMyProgress()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 12`** (7 nodes): `sidebar.tsx`, `cn()`, `handleKeyDown()`, `SidebarMenu()`, `SidebarMenuButton()`, `SidebarMenuItem()`, `useSidebar()`
+- **Thin community `Community 11`** (7 nodes): `sidebar.tsx`, `cn()`, `handleKeyDown()`, `SidebarMenu()`, `SidebarMenuButton()`, `SidebarMenuItem()`, `useSidebar()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 13`** (7 nodes): `storage.service.ts`, `StorageService`, `.checkBucketExists()`, `.constructor()`, `.createGetPreSignedUrl()`, `.ensureBucketExists()`, `.onModuleInit()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 20`** (5 nodes): `Carousel()`, `CarouselNext()`, `cn()`, `useCarousel()`, `carousel.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -277,15 +279,11 @@ Nodes (1): JwtAuthGuard
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Select()` connect `Community 3` to `Community 0`, `Community 4`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `VideosController` connect `Community 6` to `Community 0`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `Select()` connect `Community 1` to `Community 2`?**
+  _High betweenness centrality (0.017) - this node is a cross-community bridge._
 - **What connects `DatabaseModule`, `Course`, `CourseAssignment` to the rest of the system?**
   _16 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.11 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
-- **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.12 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
