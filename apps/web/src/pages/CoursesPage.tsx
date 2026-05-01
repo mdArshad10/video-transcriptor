@@ -1,137 +1,385 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, BookOpen } from 'lucide-react';
+import { BookOpen, RefreshCcw } from 'lucide-react';
+
 import { Button } from '@workspace/ui/components/button';
-import { CourseCard } from '@/components/CourseCard';
-import { CourseFormDialog } from '@/components/CourseFormDialog';
-import { type Course, type CourseStatus } from "@/utils/mock-data";
-import { useCreateCourseMutation, useGetMyCoursesQuery, useUpdateCourseMutation } from '@/store/api/courseApi';
-import { toast } from 'sonner';
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import {
+  CourseCard,
+  type CourseProgressState,
+} from '@/components/CourseCard';
+import { useGetMyCoursesQuery, type Course } from '@/store/api/courseApi';
+import {
+  useGetMyProgressQuery,
+  type VideoProgress,
+} from '@/store/api/progressApi';
+
+type ProgressTab = 'all' | CourseProgressState;
+
+interface CourseLearningSummary {
+  course: Course;
+  completedLessons: number;
+  progressPercentage: number;
+  state: CourseProgressState;
+  totalTrackedLessons: number;
+  lastActivityAt: string | null;
+}
+
+const progressTabs: { label: string; value: ProgressTab }[] = [
+  { label: 'All', value: 'all' },
+  { label: 'In Progress', value: 'in-progress' },
+  { label: 'Not Started', value: 'not-started' },
+  { label: 'Completed', value: 'completed' },
+];
+
+function getCourseState(progressItems: VideoProgress[]): CourseProgressState {
+  if (progressItems.length === 0) {
+    return 'not-started';
+  }
+
+  if (progressItems.every((item) => item.completed)) {
+    return 'completed';
+  }
+
+  return 'in-progress';
+}
+
+function getLastActivity(progressItems: VideoProgress[]) {
+  return progressItems.reduce<string | null>((latest, item) => {
+    if (!latest) return item.updated_at;
+
+    return new Date(item.updated_at).getTime() > new Date(latest).getTime()
+      ? item.updated_at
+      : latest;
+  }, null);
+}
+
+function formatRelativeActivity(value: string | null) {
+  if (!value) return undefined;
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return undefined;
+  }
+
+  const diffMs = Date.now() - date.getTime();
+  const diffDays = Math.max(0, Math.floor(diffMs / 86_400_000));
+
+  if (diffDays === 0) return 'Active today';
+  if (diffDays === 1) return 'Active yesterday';
+  if (diffDays < 7) return `Active ${diffDays} days ago`;
+
+  return `Active ${new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+  }).format(date)}`;
+}
+
+function buildCourseSummaries(
+  courses: Course[],
+  progressItems: VideoProgress[],
+): CourseLearningSummary[] {
+  return courses.map((course) => {
+    const courseProgress = progressItems.filter(
+      (item) => item.course_id === course._id,
+    );
+    const completedLessons = courseProgress.filter((item) => item.completed).length;
+    const totalTrackedLessons = courseProgress.length;
+    const progressPercentage =
+      totalTrackedLessons > 0
+        ? Math.round((completedLessons / totalTrackedLessons) * 100)
+        : 0;
+
+    return {
+      course,
+      completedLessons,
+      progressPercentage,
+      state: getCourseState(courseProgress),
+      totalTrackedLessons,
+      lastActivityAt: getLastActivity(courseProgress),
+    };
+  });
+}
+
+function CourseListSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="rounded-xl border border-border bg-card p-5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="mt-4 h-7 w-2/3" />
+        <Skeleton className="mt-3 h-4 w-full max-w-xl" />
+        <Skeleton className="mt-6 h-9 w-36" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="rounded-xl border border-border bg-card p-4">
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <Skeleton className="mt-4 h-5 w-4/5" />
+            <Skeleton className="mt-3 h-4 w-full" />
+            <Skeleton className="mt-2 h-4 w-2/3" />
+            <Skeleton className="mt-5 h-2 w-full" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const CoursesPage = () => {
-  // const [courses, setCourses] = useState<Course[]>(mockCourses);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-  const [filterStatus, setFilterStatus] = useState<CourseStatus | 'all'>('all');
-  const [createCourse] = useCreateCourseMutation();
-  const [updateCourse] = useUpdateCourseMutation();
-  const { data } = useGetMyCoursesQuery();
+  const [activeTab, setActiveTab] = useState<ProgressTab>('all');
+  const {
+    data: coursesResponse,
+    isLoading: isCoursesLoading,
+    isFetching: isCoursesFetching,
+    isError: isCoursesError,
+    refetch: refetchCourses,
+  } = useGetMyCoursesQuery();
+  const {
+    data: progressResponse,
+    isLoading: isProgressLoading,
+    isError: isProgressError,
+    refetch: refetchProgress,
+  } = useGetMyProgressQuery();
 
-  const filtered = filterStatus === 'all' ? data?.data : data?.data.filter(c => c.status === filterStatus);
+  const summaries = useMemo(
+    () =>
+      buildCourseSummaries(
+        coursesResponse?.data ?? [],
+        progressResponse?.data ?? [],
+      ),
+    [coursesResponse?.data, progressResponse?.data],
+  );
 
-  const handleSave = async (data: Partial<Course>) => {
-    try {
-      if (editingCourse) {
-        // setCourses(prev => prev.map(c => c._id === editingCourse._id ? { ...c, ...data, updated_at: new Date().toISOString() } : c));
-        await updateCourse({ id: editingCourse._id, body: data }).unwrap();
-        toast.success('Course updated successfully');
-      } else {
-        const newCourse = {
-          title: data.title || '',
-          description: data.description || '',
-          status: data.status || 'draft',
-          thumbnail_url: null,
-          owner_id: 'user-001',
-          created_by: 'user-001',
-          updated_by: 'user-001',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
-        await createCourse(newCourse).unwrap();
-        toast.success('Course created successfully')
-      }
-      setEditingCourse(null);
-      setDialogOpen(false);
-    } catch (error: any) {
-      toast.error("Failed to save course");
-      console.log(error);
-    }
+  const filteredSummaries =
+    activeTab === 'all'
+      ? summaries
+      : summaries.filter((item) => item.state === activeTab);
+
+  const resumeCourse =
+    summaries
+      .filter((item) => item.state === 'in-progress')
+      .sort((a, b) => {
+        const aTime = a.lastActivityAt ? new Date(a.lastActivityAt).getTime() : 0;
+        const bTime = b.lastActivityAt ? new Date(b.lastActivityAt).getTime() : 0;
+
+        return bTime - aTime;
+      })[0] ?? null;
+
+  const firstAvailableCourse = summaries[0] ?? null;
+  const featuredCourse = resumeCourse ?? firstAvailableCourse;
+  const isLoading = isCoursesLoading || isProgressLoading;
+  const isError = isCoursesError || isProgressError;
+  const completedCount = summaries.filter((item) => item.state === 'completed').length;
+  const inProgressCount = summaries.filter(
+    (item) => item.state === 'in-progress',
+  ).length;
+
+  const handleRetry = () => {
+    void refetchCourses();
+    void refetchProgress();
   };
-
-  const handleEdit = (course: Course) => {
-    setEditingCourse(course);
-    setDialogOpen(true);
-  };
-
-  const statusFilters: { label: string; value: CourseStatus | 'all' }[] = [
-    { label: 'All', value: 'all' },
-    { label: 'Published', value: 'published' },
-    { label: 'Draft', value: 'draft' },
-    { label: 'Archived', value: 'archived' },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-primary-foreground" />
+      <header className="sticky top-0 z-50 border-b border-border bg-card/50 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <BookOpen className="size-5" aria-hidden="true" />
             </div>
-            <h1 className="text-xl font-display font-bold text-foreground">CourseHub</h1>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-foreground">
+                CourseHub
+              </p>
+              <p className="truncate text-xs text-muted-foreground">
+                Assigned learning
+              </p>
+            </div>
           </div>
           <Button
-            onClick={() => { setEditingCourse(null); setDialogOpen(true); }}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 font-display"
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleRetry}
+            disabled={isCoursesFetching}
           >
-            <Plus className="w-4 h-4 mr-2" />
-            New Course
+            <RefreshCcw className="size-4" aria-hidden="true" />
+            Refresh
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-8"
         >
-          <h2 className="text-3xl font-display font-bold text-foreground mb-2">Your Courses</h2>
-          <p className="text-muted-foreground mb-6">Manage and track your video courses</p>
+          <section className="max-w-3xl">
+            <p className="text-sm font-medium text-muted-foreground">
+              Your learning
+            </p>
+            <h1 className="mt-2 text-3xl font-bold leading-tight text-foreground">
+              Continue your assigned courses
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Pick up where you left off, review completed work, or start the
+              next course in your list.
+            </p>
+          </section>
 
-          <div className="flex gap-2 mb-8">
-            {statusFilters.map(f => (
-              <button
-                key={f.value}
-                onClick={() => setFilterStatus(f.value)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filterStatus === f.value
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                  }`}
+          {isLoading ? (
+            <CourseListSkeleton />
+          ) : isError ? (
+            <section className="rounded-xl border border-border bg-card p-6">
+              <div className="max-w-xl">
+                <h2 className="text-lg font-semibold text-foreground">
+                  Courses could not be loaded
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  Your assigned courses are temporarily unavailable. Try again
+                  to reload your learning list.
+                </p>
+                <Button type="button" className="mt-5" onClick={handleRetry}>
+                  <RefreshCcw className="size-4" aria-hidden="true" />
+                  Retry
+                </Button>
+              </div>
+            </section>
+          ) : summaries.length === 0 ? (
+            <section className="rounded-xl border border-border bg-card p-8 text-center">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+                <BookOpen className="size-5" aria-hidden="true" />
+              </div>
+              <h2 className="mt-4 text-lg font-semibold text-foreground">
+                No assigned courses yet
+              </h2>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                When a course is assigned to you, it will appear here with your
+                progress and a clear next step.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-6"
+                onClick={handleRetry}
               >
-                {f.label}
-              </button>
-            ))}
-          </div>
+                <RefreshCcw className="size-4" aria-hidden="true" />
+                Check again
+              </Button>
+            </section>
+          ) : (
+            <>
+              {featuredCourse && (
+                <section aria-labelledby="resume-heading">
+                  <div className="mb-3 flex items-end justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {resumeCourse ? 'Resume learning' : 'Start learning'}
+                      </p>
+                      <h2
+                        id="resume-heading"
+                        className="mt-1 text-xl font-semibold text-foreground"
+                      >
+                        {resumeCourse
+                          ? 'Your next course is ready'
+                          : 'Start with your first assigned course'}
+                      </h2>
+                    </div>
+                  </div>
+                  <CourseCard
+                    course={featuredCourse.course}
+                    completedLessons={featuredCourse.completedLessons}
+                    progressPercentage={featuredCourse.progressPercentage}
+                    state={featuredCourse.state}
+                    totalTrackedLessons={featuredCourse.totalTrackedLessons}
+                    lastActivityLabel={formatRelativeActivity(
+                      featuredCourse.lastActivityAt,
+                    )}
+                    variant="resume"
+                  />
+                </section>
+              )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered?.map((course, i) => (
-              <motion.div
-                key={course?._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.1 }}
-              >
-                <CourseCard course={course} onEdit={handleEdit} />
-              </motion.div>
-            ))}
-          </div>
+              <section aria-labelledby="courses-heading" className="space-y-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <h2
+                      id="courses-heading"
+                      className="text-xl font-semibold text-foreground"
+                    >
+                      Course library
+                    </h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {summaries.length} assigned courses, {inProgressCount} in
+                      progress, {completedCount} completed.
+                    </p>
+                  </div>
 
-          {filtered?.length === 0 && (
-            <div className="text-center py-20 text-muted-foreground">
-              <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-40" />
-              <p className="font-display text-lg">No courses found</p>
-            </div>
+                  <div
+                    className="flex flex-wrap gap-2"
+                    role="tablist"
+                    aria-label="Filter courses by progress"
+                  >
+                    {progressTabs.map((tab) => (
+                      <button
+                        key={tab.value}
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === tab.value}
+                        onClick={() => setActiveTab(tab.value)}
+                        className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${
+                          activeTab === tab.value
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {filteredSummaries.length === 0 ? (
+                  <div className="rounded-xl border border-border bg-card p-8 text-center">
+                    <h3 className="text-base font-semibold text-foreground">
+                      No courses in this view
+                    </h3>
+                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                      Try another progress tab to see the courses currently
+                      assigned to you.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {filteredSummaries.map((item, index) => (
+                      <motion.div
+                        key={item.course._id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.18, delay: index * 0.03 }}
+                      >
+                        <CourseCard
+                          course={item.course}
+                          completedLessons={item.completedLessons}
+                          progressPercentage={item.progressPercentage}
+                          state={item.state}
+                          totalTrackedLessons={item.totalTrackedLessons}
+                          lastActivityLabel={formatRelativeActivity(
+                            item.lastActivityAt,
+                          )}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            </>
           )}
         </motion.div>
       </main>
-
-      <CourseFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        course={editingCourse}
-        onSave={handleSave}
-      />
     </div>
   );
 };
