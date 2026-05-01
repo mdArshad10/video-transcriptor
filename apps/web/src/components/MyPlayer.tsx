@@ -17,7 +17,10 @@ import {
   MediaGestureReceiver,
   MediaAirplayButton,
 } from "media-chrome/react"
+import { AlertTriangle, RefreshCcw } from "lucide-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+
+import { Button } from "@workspace/ui/components/button"
 import { AWS_S3_DESTINATION_BUCKET } from "@/utils/url"
 
 interface MyPlayerProps {
@@ -30,6 +33,26 @@ interface MyPlayerProps {
   title?: string
   /** Allow autoplay (muted) on mount */
   autoPlay?: boolean
+}
+
+interface PlayState {
+  mediaUrl: string
+  isPlaying: boolean
+}
+
+interface PlaybackErrorState {
+  mediaUrl: string
+}
+
+function buildMediaUrl(src: string) {
+  if (/^https?:\/\//i.test(src)) {
+    return src
+  }
+
+  const baseUrl = AWS_S3_DESTINATION_BUCKET.replace(/\/+$/, "")
+  const mediaPath = src.replace(/^\/+/, "")
+
+  return `${baseUrl}/${mediaPath}`
 }
 
 export const MyPlayer = ({
@@ -47,11 +70,18 @@ export const MyPlayer = ({
   const hasRestoredRef = useRef(false)
   const latestPositionRef = useRef(0)
 
-  // ─── State ───────────────────────────────────────────────────────────────
-  const [isReady, setIsReady] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(autoPlay)
-  const [hasError, setHasError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
+  // ─── Full media URL ───────────────────────────────────────────────────────
+  const mediaUrl = useMemo(() => buildMediaUrl(src), [src])
+
+  // ─── Source-keyed state ──────────────────────────────────────────────────
+  const [playState, setPlayState] = useState<PlayState>({
+    mediaUrl,
+    isPlaying: autoPlay,
+  })
+  const [errorState, setErrorState] = useState<PlaybackErrorState | null>(null)
+  const activeError = errorState?.mediaUrl === mediaUrl ? errorState : null
+  const isPlaying =
+    playState.mediaUrl === mediaUrl ? playState.isPlaying : autoPlay
 
   // ─── Normalized initial position ─────────────────────────────────────────
   const normalizedInitialPosition = useMemo(() => {
@@ -64,20 +94,15 @@ export const MyPlayer = ({
     return Math.floor(initialPositionSeconds)
   }, [initialPositionSeconds])
 
-  // ─── Reset when src changes ───────────────────────────────────────────────
+  // ─── Reset refs when the source or resume point changes ───────────────────
   useEffect(() => {
     hasRestoredRef.current = false
     latestPositionRef.current = 0
-    setIsReady(false)
-    setHasError(false)
-    setErrorMessage("")
-    setIsPlaying(autoPlay)
-  }, [src, normalizedInitialPosition, autoPlay])
+  }, [mediaUrl, normalizedInitialPosition])
 
   // ─── Seek to initial position once player is ready ────────────────────────
   const handleReady = useCallback(() => {
-
-    if (!isReady && hasRestoredRef.current || normalizedInitialPosition <= 0) return
+    if (hasRestoredRef.current || normalizedInitialPosition <= 0) return
 
     const player = playerRef.current
     if (!player) return
@@ -93,7 +118,6 @@ export const MyPlayer = ({
       player.currentTime = seekTo
       latestPositionRef.current = seekTo
       hasRestoredRef.current = true
-      setIsReady(true)
     }
   }, [normalizedInitialPosition])
 
@@ -118,8 +142,8 @@ export const MyPlayer = ({
     )
     latestPositionRef.current = current
     onPausePosition?.(current)
-    setIsPlaying(false)
-  }, [onPausePosition])
+    setPlayState({ mediaUrl, isPlaying: false })
+  }, [mediaUrl, onPausePosition])
 
   // ─── Ended handler ────────────────────────────────────────────────────────
   const handleEnded = useCallback(() => {
@@ -129,21 +153,29 @@ export const MyPlayer = ({
     )
     latestPositionRef.current = current
     onCompleted?.(current)
-    setIsPlaying(false)
-  }, [onCompleted])
+    setPlayState({ mediaUrl, isPlaying: false })
+  }, [mediaUrl, onCompleted])
 
   // ─── Error handler ────────────────────────────────────────────────────────
-  const handleError = useCallback((error: unknown) => {
-    console.error("[MyPlayer] Playback error:", error)
-    const msg =
-      error instanceof Error
-        ? error.message
-        : typeof error === "string"
-          ? error
-          : "An unknown playback error occurred."
-    setHasError(true)
-    setErrorMessage(msg)
-  }, [])
+  const handleError = useCallback(() => {
+    setPlayState({ mediaUrl, isPlaying: false })
+    setErrorState({ mediaUrl })
+  }, [mediaUrl])
+
+  const handlePlay = useCallback(() => {
+    setErrorState((currentError) =>
+      currentError?.mediaUrl === mediaUrl ? null : currentError
+    )
+    setPlayState({ mediaUrl, isPlaying: true })
+  }, [mediaUrl])
+
+  const handleRetry = useCallback(() => {
+    hasRestoredRef.current = false
+    setErrorState((currentError) =>
+      currentError?.mediaUrl === mediaUrl ? null : currentError
+    )
+    setPlayState({ mediaUrl, isPlaying: autoPlay })
+  }, [autoPlay, mediaUrl])
 
   // ─── Tab visibility: persist position on hide ─────────────────────────────
   useEffect(() => {
@@ -160,58 +192,66 @@ export const MyPlayer = ({
     }
   }, [handlePause])
 
-  // ─── Full media URL ───────────────────────────────────────────────────────
-  const mediaUrl = `${AWS_S3_DESTINATION_BUCKET}/${src}`
-
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="my-player-wrapper">
-      {hasError ? (
-        <div className="my-player-error" role="alert">
-          <span className="my-player-error-icon" aria-hidden="true">
-            ⚠
-          </span>
-          <p className="my-player-error-title">Playback failed</p>
-          {errorMessage && (
-            <p className="my-player-error-message">{errorMessage}</p>
-          )}
-          <button
-            className="my-player-error-retry"
-            onClick={() => {
-              setHasError(false)
-              setErrorMessage("")
-            }}
-          >
-            Retry
-          </button>
+    <div className="h-full min-h-0 w-full bg-[oklch(0.145_0_0)] text-[oklch(0.985_0_0)]">
+      {activeError ? (
+        <div
+          className="flex h-full min-h-64 w-full items-center justify-center px-6"
+          role="alert"
+        >
+          <div className="max-w-sm text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-lg border border-[oklch(0.985_0_0_/_18%)] bg-[oklch(0.985_0_0_/_8%)] text-[oklch(0.985_0_0)]">
+              <AlertTriangle className="size-5" aria-hidden="true" />
+            </div>
+            <p className="mt-4 text-base font-semibold">Playback failed</p>
+            <p className="mt-2 text-sm leading-6 text-[oklch(0.985_0_0_/_72%)]">
+              The video could not be played. Try again in a moment.
+            </p>
+            <Button
+              type="button"
+              variant="secondary"
+              className="mt-5"
+              onClick={handleRetry}
+            >
+              <RefreshCcw className="size-4" aria-hidden="true" />
+              Retry
+            </Button>
+          </div>
         </div>
       ) : (
         <MediaController
-          className="my-player-controller"
+          className="block h-full w-full overflow-hidden bg-[oklch(0.145_0_0)] [--media-control-background:oklch(0.145_0_0_/_82%)] [--media-control-hover-background:oklch(0.985_0_0_/_12%)] [--media-control-padding:0.5rem] [--media-primary-color:oklch(0.985_0_0)] [--media-secondary-color:oklch(0.985_0_0_/_70%)]"
           gesturesDisabled={false}
         >
-          {/* ── ReactPlayer renders the actual <video> element.
-               The `slot="media"` prop tells media-chrome to treat it
-               as the controlled media source. ── */}
           <ReactPlayer
             ref={playerRef}
             slot="media"
-            className="react-player"
+            className="h-full w-full"
             src={mediaUrl}
             playing={isPlaying}
-            controls={false} // media-chrome owns the controls
+            controls={false}
             playsInline
-            muted={autoPlay} // autoplay requires muted in most browsers
+            muted={autoPlay}
             width="100%"
             height="100%"
-            style={{ display: "block" }}
+            style={{
+              display: "block",
+              backgroundColor: "oklch(0.145 0 0)",
+            }}
             light={
               thumbnail_url
-                ? <img src={thumbnail_url} alt="Thumbnail" />
+                ? (
+                    <img
+                      src={thumbnail_url}
+                      alt={title ? `${title} thumbnail` : "Video thumbnail"}
+                      className="h-full w-full object-cover"
+                    />
+                  )
                 : false
             }
             onReady={handleReady}
-            onPlay={() => setIsPlaying(true)}
+            onPlay={handlePlay}
             onPause={handlePause}
             onEnded={handleEnded}
             onTimeUpdate={handleTimeUpdate}
@@ -226,49 +266,35 @@ export const MyPlayer = ({
             }}
           />
 
-          {/* ── Loading indicator (shown while buffering) ── */}
-          <MediaLoadingIndicator slot="centered-chrome" noAutohide />
+          <MediaLoadingIndicator
+            slot="centered-chrome"
+            className="rounded-lg bg-[oklch(0.145_0_0_/_78%)] p-3 text-[oklch(0.985_0_0)]"
+            noAutohide
+          />
 
-          {/* ── Tap-to-play / gesture layer ── */}
           <MediaGestureReceiver slot="centered-chrome" />
 
-          {/* ── Optional title overlay ── */}
           {title && (
-            <div slot="top-chrome" className="my-player-title">
+            <div
+              slot="top-chrome"
+              className="max-w-full bg-linear-to-b from-[oklch(0.145_0_0_/_72%)] to-transparent px-4 py-3 text-sm font-medium text-[oklch(0.985_0_0)]"
+            >
               {title}
             </div>
           )}
 
-          {/* ── Main control bar ── */}
-          <MediaControlBar className="my-player-control-bar bg-black flex gap-2">
-            {/* Play / Pause */}
+          <MediaControlBar className="flex w-full min-w-0 flex-wrap items-center gap-1 border-t border-[oklch(0.985_0_0_/_12%)] bg-[oklch(0.145_0_0_/_88%)] p-2 text-[oklch(0.985_0_0)] backdrop-blur-sm [&>*]:min-h-10 [&>*]:rounded-md [&>*]:focus-visible:outline-none [&>*]:focus-visible:ring-3 [&>*]:focus-visible:ring-[oklch(0.708_0_0_/_55%)]">
             <MediaPlayButton />
-
-            {/* Seek ±10 s */}
             <MediaSeekBackwardButton seekOffset={10} />
             <MediaSeekForwardButton seekOffset={10} />
-
-            {/* Volume */}
             <MediaMuteButton />
-            <MediaVolumeRange />
-
-            {/* Scrubber + time */}
-            <MediaTimeRange />
+            <MediaVolumeRange className="hidden w-20 sm:block" />
+            <MediaTimeRange className="min-w-32 flex-1 basis-40" />
             <MediaTimeDisplay showDuration />
-
-            {/* Captions toggle (visible when a text track is available) */}
             <MediaCaptionsButton />
-
-            {/* Playback speed: 0.5× 1× 1.5× 2× */}
             <MediaPlaybackRateButton rates={[0.5, 1, 1.25, 1.5, 2]} />
-
-            {/* Picture-in-Picture */}
             <MediaPipButton />
-
-            {/* AirPlay (Safari only; hidden elsewhere automatically) */}
             <MediaAirplayButton />
-
-            {/* Fullscreen */}
             <MediaFullscreenButton />
           </MediaControlBar>
         </MediaController>
